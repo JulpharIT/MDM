@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="build" content="2026-05-14-mlgn-v1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Material Warehouse Data · MLGN · MDM Migration Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--ink:#0f1f3d;--muted:#5b6b85;--border:#e3e8f0;--brand:#0a3d91;--brand-2:#1565d8;--accent:#f1f5fb;--green:#2e9d5a;--amber:#e08f1c;--red:#d64545;--grey:#8a98ad;--purple:#6e57d3;--shadow:0 1px 3px rgba(15,31,61,.06),0 4px 12px rgba(15,31,61,.05)}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+header.app-header{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-2) 100%);color:#fff;padding:22px 32px;box-shadow:var(--shadow)}
+header.app-header .row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+header.app-header h1{margin:0;font-size:22px;font-weight:600}
+header.app-header .sub{font-size:13px;opacity:.85;margin-top:4px}
+.back-link{color:#fff;text-decoration:none;font-size:13px;opacity:.9;margin-bottom:6px;display:inline-block;padding:4px 10px;border:1px solid rgba(255,255,255,.4);border-radius:6px;background:rgba(255,255,255,.08)}
+.back-link:hover{background:rgba(255,255,255,.18);opacity:1}
+.file-zone{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.12);border:1px dashed rgba(255,255,255,.45);border-radius:8px;padding:10px 14px;cursor:pointer;transition:background .15s;font-size:13px}
+.file-zone:hover{background:rgba(255,255,255,.2)}.file-zone.drag{background:rgba(255,255,255,.28);border-color:#fff}
+.file-zone input[type=file]{display:none}
+main{padding:24px 32px 60px;max-width:1500px;margin:0 auto}
+
+.empty-state{background:#fff;border-radius:12px;padding:60px 40px;text-align:center;box-shadow:var(--shadow);border:2px dashed var(--border)}
+.empty-state h2{margin:0 0 12px;font-size:22px;color:var(--ink)}
+.empty-state p{color:var(--muted);max-width:580px;margin:0 auto 24px}
+.empty-state .big-zone{display:inline-block;padding:24px 36px;background:var(--brand);color:#fff;border-radius:8px;cursor:pointer;font-size:15px;font-weight:500;border:none}
+.empty-state .big-zone:hover{background:var(--brand-2)}
+.empty-state .big-zone.drag{background:var(--brand-2);transform:scale(1.02)}
+.empty-state .helper{font-size:12px;color:var(--muted);margin-top:18px}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:22px}
+.kpi{background:var(--card);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);border-left:4px solid var(--brand-2)}
+.kpi.green{border-left-color:var(--green)}.kpi.amber{border-left-color:var(--amber)}.kpi.red{border-left-color:var(--red)}.kpi.grey{border-left-color:var(--grey)}.kpi.purple{border-left-color:var(--purple)}
+.kpi .label{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
+.kpi .value{font-size:24px;font-weight:700;margin-top:4px;color:var(--ink)}
+.kpi .meta{font-size:12px;color:var(--muted);margin-top:2px}
+.kpi .meta strong{color:var(--ink)}
+
+.filters{background:var(--card);border-radius:10px;padding:14px 18px;box-shadow:var(--shadow);display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:22px}
+.filters label{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.filters input[type=search]{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font:inherit;color:var(--ink);background:#fff;min-width:240px}
+.filters .spacer{flex:1}
+.btn{background:var(--brand);color:#fff;border:none;border-radius:6px;padding:8px 14px;font:inherit;cursor:pointer;font-weight:500}
+.btn.secondary{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+.btn:hover{opacity:.92}
+
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:22px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
+@media(max-width:1100px){.grid3{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+@media(max-width:720px){.grid3{grid-template-columns:1fr}}
+
+.panel{background:var(--card);border-radius:10px;padding:16px 18px 18px;box-shadow:var(--shadow);margin-bottom:22px}
+.panel h2{margin:0 0 12px;font-size:14px;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:space-between}
+.panel h2 .hint{font-size:11px;color:var(--muted);font-weight:400}
+.chart-wrap{position:relative;height:280px}
+
+table.detail{width:100%;border-collapse:collapse;font-size:13px}
+table.detail thead th{text-align:left;padding:10px 8px;background:var(--accent);color:var(--ink);font-weight:600;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.4px;cursor:pointer;user-select:none;white-space:nowrap;position:sticky;top:0}
+table.detail thead th:hover{background:#e6edf6}
+table.detail thead th .arrow{color:var(--brand-2);margin-left:3px;font-size:10px}
+table.detail tbody td{padding:7px 8px;border-bottom:1px solid var(--border);vertical-align:middle;white-space:nowrap;max-width:280px;overflow:hidden;text-overflow:ellipsis}
+table.detail tbody tr:hover{background:#fafcff}
+table.detail tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
+
+.scrollbox{overflow-x:auto;max-height:600px;overflow-y:auto;border:1px solid var(--border);border-radius:6px}
+
+.pagination{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px}
+.pagination button{background:#fff;border:1px solid var(--border);border-radius:4px;padding:5px 10px;cursor:pointer;font:inherit}
+.pagination button:disabled{opacity:.4;cursor:not-allowed}
+.pagination .page-info{color:var(--muted)}
+
+.col-picker-popover{position:absolute;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);padding:12px;max-height:400px;overflow-y:auto;width:280px;z-index:30}
+.col-picker-popover label{display:flex;align-items:center;gap:6px;font-size:13px;padding:3px 0;cursor:pointer}
+
+.ms-wrap{position:relative;display:inline-block}
+.ms-trigger{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font:inherit;color:var(--ink);background:#fff;min-width:140px;max-width:220px;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.ms-trigger:hover{border-color:var(--brand-2)}
+.ms-trigger .ms-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-trigger .ms-arrow{color:var(--muted);font-size:9px}
+.ms-panel{position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);padding:8px;width:320px;max-height:380px;display:flex;flex-direction:column;z-index:40}
+.ms-panel.hidden{display:none}
+.ms-search{padding:6px 8px;border:1px solid var(--border);border-radius:4px;font:inherit;font-size:13px;margin-bottom:6px}
+.ms-actions{display:flex;gap:4px;margin-bottom:6px;font-size:11px;align-items:center}
+.ms-actions button{background:transparent;color:var(--brand);border:none;cursor:pointer;font:inherit;padding:4px 8px;border-radius:4px;font-weight:600}
+.ms-actions button:hover{background:var(--accent)}
+.ms-actions .hint{color:var(--muted);font-size:11px;margin-left:auto}
+.ms-list{overflow-y:auto;flex:1;border-top:1px solid var(--border);padding-top:4px}
+.ms-list label{display:flex;align-items:center;gap:6px;font-size:13px;padding:4px 6px;cursor:pointer;border-radius:4px}
+.ms-list label:hover{background:var(--accent)}
+.ms-list label .count{margin-left:auto;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.ms-list .empty-hint{color:var(--muted);font-size:12px;padding:8px;text-align:center;font-style:italic}
+
+.scorecard-row{display:flex;align-items:center;gap:12px;padding:6px 0;font-size:13px}
+.scorecard-row .name{flex:0 0 220px;font-weight:500}
+.scorecard-row .bar{flex:1;height:10px;background:#eef1f7;border-radius:4px;overflow:hidden}
+.scorecard-row .bar .fill{height:100%}
+.scorecard-row .bar .fill.high{background:var(--green)}
+.scorecard-row .bar .fill.mid{background:var(--amber)}
+.scorecard-row .bar .fill.low{background:var(--red)}
+.scorecard-row .pctv{flex:0 0 100px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+
+footer.app-footer{text-align:center;color:var(--muted);font-size:12px;padding:18px;border-top:1px solid var(--border);background:#fff}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;box-shadow:var(--shadow);opacity:0;transform:translateY(20px);transition:opacity .25s,transform .25s;pointer-events:none;z-index:50}
+.toast.show{opacity:1;transform:translateY(0)}
+
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;z-index:100;font-size:15px;color:var(--ink);flex-direction:column;gap:14px}
+.loading-overlay .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--brand);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="row">
+    <div>
+      <a href="[C] MDM Migration Dashboard.html" class="back-link">← MDM Migration Dashboard</a>
+      <h1>Material Warehouse Data · MLGN Cleansing</h1>
+      <div class="sub" id="lastUpdated">No data loaded · upload your MLGN export to begin</div>
+    </div>
+    <label class="file-zone" id="fileZone" title="Drop or pick the latest MLGN export to refresh">
+      <span>Refresh from Excel</span>
+      <input type="file" id="fileInput" accept=".xlsx,.xls" />
+    </label>
+  </div>
+</header>
+
+<main>
+
+<div id="emptyState" class="empty-state">
+  <h2>Drop your MLGN (Material Data per Warehouse) Excel to begin</h2>
+  <p>Upload your latest MLGN export. The dashboard will profile warehouse coverage, placement/removal strategies, multi-warehouse materials, and cutover anomalies — all in your browser.</p>
+  <button class="big-zone" id="bigUpload">Upload MLGN file</button>
+  <div class="helper">Files up to ~50&nbsp;MB and 200k rows have been tested. Your data persists locally (IndexedDB) so you only need to upload again when the source changes.</div>
+</div>
+
+<div id="dashboard" class="hidden">
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="filters">
+    <label>MATNR</label>
+    <div class="ms-wrap" id="msMatnr"><button type="button" class="ms-trigger"><span class="ms-text">All materials</span><span class="ms-arrow">▼</span></button><div class="ms-panel hidden"></div></div>
+    <label>LGNUM</label>
+    <div class="ms-wrap" id="msLgnum"><button type="button" class="ms-trigger"><span class="ms-text">All warehouses</span><span class="ms-arrow">▼</span></button><div class="ms-panel hidden"></div></div>
+    <label>Stock Placement</label>
+    <div class="ms-wrap" id="msLtkze"><button type="button" class="ms-trigger"><span class="ms-text">All placements</span><span class="ms-arrow">▼</span></button><div class="ms-panel hidden"></div></div>
+    <label>Search</label>
+    <input type="search" id="fltSearch" placeholder="MATNR…">
+    <span class="spacer"></span>
+    <button class="btn secondary" id="btnReset">Reset</button>
+  </div>
+
+  <div class="grid3">
+    <div class="panel"><h2>By Warehouse (LGNUM) <span class="hint">distribution</span></h2><div class="chart-wrap"><canvas id="chartLgnum"></canvas></div></div>
+    <div class="panel"><h2>Stock Placement Strategy (LTKZE) <span class="hint">top 10</span></h2><div class="chart-wrap"><canvas id="chartLtkze"></canvas></div></div>
+    <div class="panel"><h2>Warehouses per Material <span class="hint">replication profile</span></h2><div class="chart-wrap"><canvas id="chartWhsCount"></canvas></div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Stock Placement / Removal Indicators <span class="hint">distribution breakdown</span></h2>
+      <div id="strategyPanel"></div>
+    </div>
+    <div class="panel">
+      <h2>Deletion / Status Flags by Warehouse <span class="hint">LVORM=X per LGNUM + cutover anomalies</span></h2>
+      <div id="lvormPanel"></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Bin &amp; Quantity Completeness <span class="hint">% populated in scope</span></h2>
+      <div id="scorecard"></div>
+    </div>
+    <div class="panel">
+      <h2>Materials in Multiple Warehouses <span class="hint">top 30 by replication</span></h2>
+      <div id="topMaterialsPanel"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="position:relative;">
+    <h2 style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <span>Detail Grid <span class="hint" id="rowCount" style="color:var(--muted);font-weight:400;font-size:11px;"></span></span>
+      <span style="display:flex;gap:8px;align-items:center;">
+        <button class="btn secondary" id="btnColPicker">Columns</button>
+        <button class="btn secondary" id="btnExportCsv">Export CSV</button>
+        <button class="btn" id="btnExportXlsx">Export Excel</button>
+      </span>
+    </h2>
+    <div id="colPickerPopover" class="col-picker-popover hidden"></div>
+    <div class="scrollbox">
+      <table class="detail" id="detailTable">
+        <thead><tr id="detailHead"></tr></thead>
+        <tbody id="detailBody"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+</div>
+</main>
+
+<footer class="app-footer">
+  Read-only reporting view of the SAP <code>MLGN</code> Material Data per Warehouse Number export. All processing happens locally in your browser.
+</footer>
+
+<div class="toast" id="toast"></div>
+<div class="loading-overlay hidden" id="loading"><div class="spinner"></div><div id="loadingMsg">Loading…</div></div>
+
+<script>
+const FIELD_LABELS = {
+  '_comments_it': 'Comments from IT',
+  '_remarks_business': 'Remarks/Feedback from Business',
+  'MATNR': 'Material',
+  'LGNUM': 'Warehouse Number',
+  'LVORM': 'Del.flag: warehouse',
+  'BEZSK': 'Storage Section Ind.',
+  'LTKZE': 'Stock placement',
+  'LTKZA': 'Stock removal',
+  'MEILG': 'WM unit',
+  'LGBKL': 'Bulk storage',
+  'KOMM':  'Picking storage type',
+  'KZPICK':'2-step picking'
+};
+
+const BIZ_TO_TECH = [
+  [/comments?\s*from\s*it/i, '_comments_it'],
+  [/remarks/i, '_remarks_business'],
+  [/^\s*material$/i, 'MATNR'],
+  [/warehouse\s*number/i, 'LGNUM'],
+  [/del(\.|etion)?\s*flag.*warehouse?|warehse/i, 'LVORM'],
+  [/storage\s*section\s*ind/i, 'BEZSK'],
+  [/^\s*stock\s*placement\s*$/i, 'LTKZE'],
+  [/^\s*stock\s*removal\s*$/i, 'LTKZA'],
+  [/wm\s*unit/i, 'MEILG'],
+  [/bulk\s*storage/i, 'LGBKL'],
+  [/picking\s*storage\s*type/i, 'KOMM'],
+  [/2-step\s*picking/i, 'KZPICK']
+];
+
+const DEFAULT_COLS = ['_comments_it','MATNR','LGNUM','LVORM','BEZSK','LTKZE','LTKZA','MEILG','LGBKL','KOMM','KZPICK'];
+
+let DATA = [];
+let COLUMNS = [];
+let LABELS = {};
+let visibleCols = [];
+let sortState = { key: 'MATNR', dir: 1 };
+let currentPage = 1;
+const PAGE_SIZE = 50;
+let chartInstances = {};
+const FILTER_STATE = {
+  msMatnr: { key: 'MATNR', label: 'materials',  selected: new Set(), highCardinality: true },
+  msLgnum: { key: 'LGNUM', label: 'warehouses', selected: new Set() },
+  msLtkze: { key: 'LTKZE', label: 'placements', selected: new Set() }
+};
+
+const DB_NAME = 'mdm_mlgn';
+const DB_STORE = 'data';
+const DB_KEY = 'main';
+
+function boot() {
+  bindUI();
+  showLoading('Loading saved data…');
+  loadFromIndexedDB().then(saved => {
+    hideLoading();
+    if (saved && saved.rows && saved.rows.length) {
+      applyData(saved.rows, saved.columns, saved.labels, saved.timestamp);
+      showToast('Loaded ' + saved.rows.length.toLocaleString() + ' MLGN rows from saved cache');
+    }
+  }).catch(e => { hideLoading(); console.error(e); });
+}
+
+function bindUI() {
+  const fz = document.getElementById('fileZone');
+  const fi = document.getElementById('fileInput');
+  const big = document.getElementById('bigUpload');
+  fz.addEventListener('click', () => fi.click());
+  big.addEventListener('click', () => fi.click());
+  fi.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+  ['dragenter','dragover'].forEach(ev => {
+    fz.addEventListener(ev, e => { e.preventDefault(); fz.classList.add('drag'); });
+    big.addEventListener(ev, e => { e.preventDefault(); big.classList.add('drag'); });
+  });
+  ['dragleave','drop'].forEach(ev => {
+    fz.addEventListener(ev, e => { e.preventDefault(); fz.classList.remove('drag'); });
+    big.addEventListener(ev, e => { e.preventDefault(); big.classList.remove('drag'); });
+  });
+  fz.addEventListener('drop', e => { if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+  big.addEventListener('drop', e => { if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+  document.addEventListener('dragover', e => e.preventDefault());
+  document.addEventListener('drop', e => { if (e.target.closest('.empty-state, .file-zone')) return; e.preventDefault(); });
+
+  document.getElementById('fltSearch').addEventListener('input', () => { currentPage = 1; render(); });
+  document.getElementById('btnReset').addEventListener('click', () => {
+    document.getElementById('fltSearch').value = '';
+    Object.keys(FILTER_STATE).forEach(id => {
+      FILTER_STATE[id].selected.clear();
+      const wrap = document.getElementById(id);
+      if (wrap) wrap.querySelectorAll('.ms-list input').forEach(cb => cb.checked = false);
+      updateMsTrigger(id);
+    });
+    currentPage = 1; render();
+  });
+  document.getElementById('btnExportCsv').addEventListener('click', () => exportFiltered('csv'));
+  document.getElementById('btnExportXlsx').addEventListener('click', () => exportFiltered('xlsx'));
+  document.getElementById('btnColPicker').addEventListener('click', toggleColPicker);
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.ms-wrap')) document.querySelectorAll('.ms-panel').forEach(p => p.classList.add('hidden'));
+    const pop = document.getElementById('colPickerPopover');
+    if (!pop.classList.contains('hidden') && !e.target.closest('#colPickerPopover') && !e.target.closest('#btnColPicker')) pop.classList.add('hidden');
+  });
+}
+
+function handleFile(file) {
+  showLoading('Reading ' + file.name + '…');
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    setTimeout(() => {
+      try {
+        showLoading('Parsing workbook…');
+        const wb = XLSX.read(e.target.result, { type:'array', cellDates:true, raw:false });
+        const sheet = wb.SheetNames.find(n => n.toLowerCase().includes('main')) || wb.SheetNames[0];
+        const ws = wb.Sheets[sheet];
+        showLoading('Converting rows…');
+        const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' });
+        const parsed = parseRows(rows);
+        if (!parsed.rows.length) { hideLoading(); showToast('No data rows found in file'); return; }
+        showLoading('Saving to local cache…');
+        const ts = formatGST(new Date());
+        saveToIndexedDB({ rows: parsed.rows, columns: parsed.columns, labels: parsed.labels, timestamp: ts })
+          .then(() => { applyData(parsed.rows, parsed.columns, parsed.labels, ts); hideLoading(); showToast('Loaded ' + parsed.rows.length.toLocaleString() + ' MLGN rows'); })
+          .catch(err => { hideLoading(); applyData(parsed.rows, parsed.columns, parsed.labels, ts); showToast('Loaded (cache save failed): ' + err.message); });
+      } catch(err) { hideLoading(); console.error(err); showToast('Could not parse: ' + err.message); }
+    }, 50);
+  };
+  reader.onerror = () => { hideLoading(); showToast('File read error'); };
+  reader.readAsArrayBuffer(file);
+}
+
+function parseRows(rows) {
+  if (!rows.length) return { rows: [], columns: [], labels: {} };
+  let bizIdx = -1;
+  for (let i = 0; i < Math.min(rows.length, 5); i++) {
+    const set = rows[i].map(c => String(c||'').trim().toLowerCase());
+    if (set.includes('material') && set.includes('warehouse number')) { bizIdx = i; break; }
+  }
+  if (bizIdx === -1) bizIdx = 0;
+  const biz = rows[bizIdx].map(c => String(c||'').trim());
+
+  const cols = []; const labels = {};
+  for (let i = 0; i < biz.length; i++) {
+    let key = null;
+    const b = biz[i] || '';
+    for (const [re, sap] of BIZ_TO_TECH) { if (re.test(b)) { key = sap; break; } }
+    if (!key) {
+      if (b) key = '_' + b.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,30);
+      else key = '_col' + i;
+    }
+    let suffix = 1, final = key;
+    while (cols.includes(final)) { final = key + '_' + suffix; suffix++; }
+    cols.push(final);
+    labels[final] = FIELD_LABELS[final] || b || final;
+  }
+
+  const start = bizIdx + 1;
+  const out = [];
+  for (let i = start; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r || r.every(c => c === null || c === undefined || String(c).trim() === '')) continue;
+    const obj = {};
+    for (let j = 0; j < cols.length; j++) {
+      let v = r[j];
+      if (v instanceof Date) v = v.toISOString().slice(0,10);
+      obj[cols[j]] = (v === null || v === undefined) ? '' : v;
+    }
+    out.push(obj);
+  }
+  return { rows: out, columns: cols, labels: labels };
+}
+
+function applyData(rows, columns, labels, timestamp) {
+  DATA = rows;
+  COLUMNS = columns;
+  LABELS = labels;
+  visibleCols = DEFAULT_COLS.filter(c => columns.includes(c));
+  if (!visibleCols.length) visibleCols = columns.slice(0, 12);
+  document.getElementById('lastUpdated').textContent =
+    'Loaded · ' + (timestamp || formatGST(new Date())) + ' · ' + DATA.length.toLocaleString() + ' MLGN rows';
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  populateFilterOptions();
+  render();
+}
+
+function getFiltered() {
+  const q = (document.getElementById('fltSearch').value || '').toLowerCase().trim();
+  const sM = FILTER_STATE.msMatnr.selected;
+  const sN = FILTER_STATE.msLgnum.selected;
+  const sP = FILTER_STATE.msLtkze.selected;
+  const out = [];
+  for (let i = 0; i < DATA.length; i++) {
+    const d = DATA[i];
+    if (sM.size && !sM.has(String(d.MATNR))) continue;
+    if (sN.size && !sN.has(String(d.LGNUM))) continue;
+    if (sP.size && !sP.has(String(d.LTKZE))) continue;
+    if (q && !String(d.MATNR||'').toLowerCase().includes(q)) continue;
+    out.push(d);
+  }
+  return out;
+}
+
+function populateFilterOptions() { Object.keys(FILTER_STATE).forEach(id => buildMultiSelect(id)); }
+
+function buildMultiSelect(id) {
+  const cfg = FILTER_STATE[id];
+  const wrap = document.getElementById(id);
+  if (!wrap) return;
+  const counts = {};
+  for (let i = 0; i < DATA.length; i++) {
+    const v = DATA[i][cfg.key];
+    if (v === undefined || v === null || String(v).trim() === '') continue;
+    const key = String(v);
+    counts[key] = (counts[key]||0) + 1;
+  }
+  const sorted = Object.keys(counts).sort();
+  for (const v of Array.from(cfg.selected)) { if (counts[v] === undefined) cfg.selected.delete(v); }
+  const trigger = wrap.querySelector('.ms-trigger');
+  const panel = wrap.querySelector('.ms-panel');
+
+  const highCard = cfg.highCardinality && sorted.length > 500;
+  panel.innerHTML = '<input type="text" class="ms-search" placeholder="' + (highCard ? 'Type to search (' + sorted.length.toLocaleString() + ' items)…' : 'Search...') + '">'
+    + '<div class="ms-actions"><button type="button" class="ms-all">Select all</button><button type="button" class="ms-none">Clear</button><span class="hint" id="ms-count-' + id + '"></span></div>'
+    + '<div class="ms-list"></div>';
+
+  const search = panel.querySelector('.ms-search');
+  const list = panel.querySelector('.ms-list');
+  const countSpan = panel.querySelector('#ms-count-' + id);
+
+  const renderList = (query) => {
+    if (highCard && !query) {
+      list.innerHTML = '<div class="empty-hint">' + sorted.length.toLocaleString() + ' materials available. Type to search.</div>';
+      countSpan.textContent = '';
+      return;
+    }
+    const q = (query || '').toLowerCase();
+    let filtered = q ? sorted.filter(v => v.toLowerCase().includes(q)) : sorted;
+    const capped = highCard ? filtered.slice(0, 200) : filtered.slice(0, 1000);
+    list.innerHTML = capped.map(v => '<label><input type="checkbox" value="' + esc(v) + '" ' + (cfg.selected.has(v)?'checked':'') + '><span>' + esc(v) + '</span><span class="count">' + counts[v].toLocaleString() + '</span></label>').join('') || '<div class="empty-hint">No matches</div>';
+    countSpan.textContent = filtered.length > capped.length ? 'Showing ' + capped.length + ' of ' + filtered.length.toLocaleString() : '';
+    list.querySelectorAll('input').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) cfg.selected.add(cb.value); else cfg.selected.delete(cb.value);
+        updateMsTrigger(id); currentPage = 1; render();
+      });
+    });
+  };
+
+  if (!trigger._bound) {
+    trigger._bound = true;
+    trigger.addEventListener('click', e => {
+      e.stopPropagation();
+      document.querySelectorAll('.ms-panel').forEach(p => { if (p !== panel) p.classList.add('hidden'); });
+      panel.classList.toggle('hidden');
+      if (!panel.classList.contains('hidden')) { const s = panel.querySelector('.ms-search'); if (s) s.focus(); }
+    });
+  }
+  search.addEventListener('input', () => renderList(search.value));
+  panel.querySelector('.ms-all').addEventListener('click', () => {
+    list.querySelectorAll('input').forEach(cb => { cb.checked = true; cfg.selected.add(cb.value); });
+    updateMsTrigger(id); currentPage = 1; render();
+  });
+  panel.querySelector('.ms-none').addEventListener('click', () => {
+    cfg.selected.clear();
+    list.querySelectorAll('input').forEach(cb => cb.checked = false);
+    updateMsTrigger(id); currentPage = 1; render();
+  });
+  renderList('');
+  updateMsTrigger(id);
+}
+
+function updateMsTrigger(id) {
+  const cfg = FILTER_STATE[id];
+  const wrap = document.getElementById(id);
+  if (!wrap) return;
+  const text = wrap.querySelector('.ms-text');
+  const sel = cfg.selected.size;
+  if (sel === 0) text.textContent = 'All ' + cfg.label;
+  else if (sel === 1) text.textContent = Array.from(cfg.selected)[0];
+  else text.textContent = sel.toLocaleString() + ' ' + cfg.label + ' selected';
+}
+
+function render() {
+  const filtered = getFiltered();
+  renderKPIs(filtered);
+  renderCharts(filtered);
+  renderStrategy(filtered);
+  renderLvormByWarehouse(filtered);
+  renderScorecard(filtered);
+  renderTopMaterials(filtered);
+  renderTable(filtered);
+}
+
+function renderKPIs(rows) {
+  const total = rows.length;
+  const matnrSet = new Set(); const lgnumSet = new Set();
+  const matnrWhs = {};
+  let lvormX = 0;
+  const matnrLvormState = {};  // matnr -> {x: count, nox: count}
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    const m = String(r.MATNR||'');
+    const n = String(r.LGNUM||'');
+    if (m) matnrSet.add(m);
+    if (n) lgnumSet.add(n);
+    if (m && n) { if (!matnrWhs[m]) matnrWhs[m] = new Set(); matnrWhs[m].add(n); }
+    const isX = String(r.LVORM||'').trim().toUpperCase() === 'X';
+    if (isX) lvormX++;
+    if (m) {
+      if (!matnrLvormState[m]) matnrLvormState[m] = { x:0, nox:0 };
+      if (isX) matnrLvormState[m].x++; else matnrLvormState[m].nox++;
+    }
+  }
+  const multi = Object.values(matnrWhs).filter(s => s.size > 1).length;
+  const anomalies = Object.values(matnrLvormState).filter(v => v.x > 0 && v.nox > 0).length;
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi"><div class="label">Total MLGN Rows</div><div class="value">${total.toLocaleString()}</div><div class="meta">warehouse extensions</div></div>
+    <div class="kpi green"><div class="label">Distinct Materials</div><div class="value">${matnrSet.size.toLocaleString()}</div><div class="meta">unique MATNRs</div></div>
+    <div class="kpi purple"><div class="label">Distinct Warehouses</div><div class="value">${lgnumSet.size}</div><div class="meta">unique LGNUMs</div></div>
+    <div class="kpi amber"><div class="label">Multi-Warehouse Materials</div><div class="value">${multi.toLocaleString()}</div><div class="meta">${pct(multi, matnrSet.size)} of distinct materials</div></div>
+    <div class="kpi red"><div class="label">Deletion Flag (LVORM=X)</div><div class="value">${lvormX.toLocaleString()}</div><div class="meta">${pct(lvormX,total)} of scope</div></div>
+    <div class="kpi grey"><div class="label">Cutover Anomalies</div><div class="value">${anomalies.toLocaleString()}</div><div class="meta">mixed LVORM across warehouses</div></div>
+  `;
+}
+
+const PALETTE = ['#1565d8','#2e9d5a','#e08f1c','#6e57d3','#d64545','#0aa6a6','#b9446b','#5b6b85','#3a86ff','#fb8500','#52b788','#7209b7','#e63946','#264653','#8a98ad','#0a3d91'];
+
+function drawChart(id, type, labels, data, opts) {
+  if (chartInstances[id]) chartInstances[id].destroy();
+  const colors = labels.map((_,i) => PALETTE[i % PALETTE.length]);
+  chartInstances[id] = new Chart(document.getElementById(id), {
+    type,
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderColor:'#fff', borderWidth:1.5 }]},
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position: opts.legend || 'bottom', labels:{ boxWidth:10, padding:8, font:{size:11} } },
+                tooltip:{ callbacks:{ label: c => c.label + ': ' + c.raw.toLocaleString() } } },
+      cutout: opts.cutout }
+  });
+}
+function drawBar(id, labels, data, orient) {
+  if (chartInstances[id]) chartInstances[id].destroy();
+  const colors = labels.map((_,i) => PALETTE[i % PALETTE.length]);
+  chartInstances[id] = new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 3 }]},
+    options: { indexAxis: orient === 'horizontal' ? 'y' : 'x', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c => c.raw.toLocaleString() } } },
+      scales:{ x:{ticks:{font:{size:11}}}, y:{ticks:{font:{size:11}}} } }
+  });
+}
+
+function renderCharts(rows) {
+  const lgnumCounts = countBy(rows, 'LGNUM');
+  drawChart('chartLgnum', 'doughnut', Object.keys(lgnumCounts), Object.values(lgnumCounts), { legend:'right', cutout:'58%' });
+
+  const ltkzeCounts = countBy(rows, 'LTKZE');
+  const top = Object.entries(ltkzeCounts).sort((a,b)=>b[1]-a[1]).slice(0, 10);
+  drawBar('chartLtkze', top.map(e=>e[0]), top.map(e=>e[1]), 'horizontal');
+
+  const matnrWhs = {};
+  for (let i = 0; i < rows.length; i++) {
+    const m = String(rows[i].MATNR||''); if (!m) continue;
+    const n = String(rows[i].LGNUM||''); if (!n) continue;
+    if (!matnrWhs[m]) matnrWhs[m] = new Set();
+    matnrWhs[m].add(n);
+  }
+  const buckets = { '1':0,'2':0,'3':0,'4+':0 };
+  for (const s of Object.values(matnrWhs)) {
+    const n = s.size;
+    if (n >= 4) buckets['4+']++;
+    else buckets[String(n)]++;
+  }
+  drawBar('chartWhsCount', Object.keys(buckets), Object.values(buckets), 'vertical');
+}
+
+function renderStrategy(rows) {
+  const fields = [
+    { c: 'LTKZE', label: 'Stock placement' },
+    { c: 'LTKZA', label: 'Stock removal' },
+    { c: 'BEZSK', label: 'Storage Section Ind.' }
+  ].filter(f => COLUMNS.includes(f.c));
+  if (!fields.length || !rows.length) {
+    document.getElementById('strategyPanel').innerHTML = '<div style="color:var(--muted);padding:20px;text-align:center;">No placement/removal fields present.</div>';
+    return;
+  }
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:14px;">';
+  for (const f of fields) {
+    const counts = {}; let blank = 0;
+    for (let i = 0; i < rows.length; i++) {
+      const v = String(rows[i][f.c]||'').trim();
+      if (!v) blank++; else counts[v] = (counts[v]||0) + 1;
+    }
+    const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 6);
+    html += '<div style="background:var(--accent);border-radius:8px;padding:10px 14px;">'
+      + '<div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;">' + esc(f.label) + ' <code style="font-size:10px;color:var(--brand);">' + esc(f.c) + '</code></div>';
+    for (const [k, v] of sorted) {
+      html += '<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;"><span><code>' + esc(k) + '</code></span><strong>' + v.toLocaleString() + '</strong></div>';
+    }
+    if (blank) html += '<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--muted);"><span>(blank)</span><strong>' + blank.toLocaleString() + '</strong></div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  document.getElementById('strategyPanel').innerHTML = html;
+}
+
+function renderLvormByWarehouse(rows) {
+  const byWh = {};  // lgnum -> { total, x }
+  const matnrState = {};
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    const n = String(r.LGNUM||'').trim();
+    const m = String(r.MATNR||'').trim();
+    if (!n) continue;
+    const isX = String(r.LVORM||'').trim().toUpperCase() === 'X';
+    if (!byWh[n]) byWh[n] = { total: 0, x: 0 };
+    byWh[n].total++;
+    if (isX) byWh[n].x++;
+    if (m) {
+      if (!matnrState[m]) matnrState[m] = { x:0, nox:0, whs: new Set() };
+      if (isX) matnrState[m].x++; else matnrState[m].nox++;
+      matnrState[m].whs.add(n);
+    }
+  }
+  const sortedWh = Object.entries(byWh).sort((a,b) => b[1].total - a[1].total);
+  const anomalies = Object.entries(matnrState).filter(([m,v]) => v.x > 0 && v.nox > 0).slice(0, 10);
+
+  let html = '<table class="detail"><thead><tr><th>LGNUM</th><th class="num">Total Rows</th><th class="num">LVORM=X</th><th class="num">% Flagged</th></tr></thead><tbody>';
+  for (const [n, v] of sortedWh) {
+    html += '<tr><td><strong>' + esc(n) + '</strong></td><td class="num">' + v.total.toLocaleString() + '</td><td class="num">' + v.x.toLocaleString() + '</td><td class="num">' + (v.total ? Math.round(v.x/v.total*100) : 0) + '%</td></tr>';
+  }
+  html += '</tbody></table>';
+
+  if (anomalies.length) {
+    html += '<div style="margin-top:12px;font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:600;letter-spacing:.4px;">Cutover anomalies (top 10)</div>';
+    html += '<div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Materials with LVORM=X in some warehouses but active in others:</div>';
+    html += '<table class="detail"><thead><tr><th>MATNR</th><th>Warehouses</th><th class="num">Flagged</th><th class="num">Active</th></tr></thead><tbody>';
+    for (const [m, v] of anomalies) {
+      html += '<tr><td><strong>' + esc(m) + '</strong></td><td>' + Array.from(v.whs).map(w => '<span style="background:var(--accent);color:var(--brand);padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;margin-right:4px;">' + esc(w) + '</span>').join('') + '</td><td class="num">' + v.x + '</td><td class="num">' + v.nox + '</td></tr>';
+    }
+    html += '</tbody></table>';
+  }
+  document.getElementById('lvormPanel').innerHTML = html;
+}
+
+function renderScorecard(rows) {
+  if (!rows.length) { document.getElementById('scorecard').innerHTML = '<div style="color:var(--muted);padding:20px;text-align:center;">No data in scope</div>'; return; }
+  const fields = COLUMNS.filter(c => !['_comments_it','_remarks_business','MATNR','LGNUM'].includes(c));
+  const stats = fields.map(c => {
+    let filled = 0;
+    for (let i = 0; i < rows.length; i++) {
+      const v = rows[i][c];
+      if (v === null || v === undefined || String(v).trim() === '') continue;
+      if (typeof v === 'number' && v === 0) continue;  // treat 0 as blank for numeric
+      filled++;
+    }
+    return { c, pct: Math.round(filled/rows.length*100), filled };
+  }).sort((a,b) => b.pct - a.pct);
+  document.getElementById('scorecard').innerHTML = stats.map(s => {
+    const cls = s.pct >= 80 ? 'high' : (s.pct >= 40 ? 'mid' : 'low');
+    return `<div class="scorecard-row"><div class="name" title="${esc(s.c)}">${esc(LABELS[s.c] || s.c)}</div><div class="bar"><div class="fill ${cls}" style="width:${s.pct}%"></div></div><div class="pctv">${s.pct}% · ${s.filled.toLocaleString()}</div></div>`;
+  }).join('') + '<div style="margin-top:10px;font-size:11px;color:var(--muted);">Numeric fields count <code>0</code> as blank.</div>';
+}
+
+function renderTopMaterials(rows) {
+  const info = {};
+  for (let i = 0; i < rows.length; i++) {
+    const m = String(rows[i].MATNR||''); if (!m) continue;
+    const n = String(rows[i].LGNUM||''); if (!n) continue;
+    if (!info[m]) info[m] = new Set();
+    info[m].add(n);
+  }
+  const top = Object.entries(info).filter(([m,s]) => s.size > 1).sort((a,b) => b[1].size - a[1].size).slice(0, 30);
+  if (!top.length) {
+    document.getElementById('topMaterialsPanel').innerHTML = '<div style="color:var(--muted);padding:20px;text-align:center;">No materials in multiple warehouses in scope.</div>';
+    return;
+  }
+  document.getElementById('topMaterialsPanel').innerHTML = `
+    <div style="overflow-x:auto;max-height:340px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;">
+      <table class="detail">
+        <thead><tr><th>MATNR</th><th class="num"># Whs</th><th>Warehouses</th></tr></thead>
+        <tbody>${top.map(([m,whs]) => `
+          <tr>
+            <td><strong>${esc(m)}</strong></td>
+            <td class="num">${whs.size}</td>
+            <td>${Array.from(whs).map(w=>`<span style="background:var(--accent);color:var(--brand);padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;margin-right:4px;">${esc(w)}</span>`).join('')}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderTable(rowsArg) {
+  const rows = rowsArg || getFiltered();
+  const k = sortState.key, dir = sortState.dir;
+  const sorted = rows.slice().sort((a,b) => {
+    let av = a[k], bv = b[k];
+    if (av === undefined || av === null) av = '';
+    if (bv === undefined || bv === null) bv = '';
+    const an = parseFloat(av), bn = parseFloat(bv);
+    if (!isNaN(an) && !isNaN(bn) && String(av).trim() !== '' && String(bv).trim() !== '') return (an - bn) * dir;
+    av = String(av); bv = String(bv);
+    if (av < bv) return -1*dir; if (av > bv) return 1*dir; return 0;
+  });
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const slice = sorted.slice(start, start + PAGE_SIZE);
+  document.getElementById('rowCount').textContent = '· ' + sorted.length.toLocaleString() + ' rows · page ' + currentPage + ' of ' + totalPages.toLocaleString();
+
+  const head = document.getElementById('detailHead');
+  head.innerHTML = visibleCols.map(c => {
+    const arrow = c === sortState.key ? (sortState.dir === 1 ? '▲' : '▼') : '';
+    return `<th data-key="${esc(c)}" title="${esc(c)}">${esc(LABELS[c] || c)} ${arrow ? `<span class="arrow">${arrow}</span>` : ''}</th>`;
+  }).join('');
+  head.querySelectorAll('th').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.key;
+      sortState.dir = (sortState.key === key) ? -sortState.dir : 1;
+      sortState.key = key;
+      renderTable(rows);
+    });
+  });
+  const body = document.getElementById('detailBody');
+  if (!slice.length) {
+    body.innerHTML = `<tr><td colspan="${visibleCols.length}" style="padding:30px;text-align:center;color:var(--muted);">No rows match the current filters</td></tr>`;
+  } else {
+    body.innerHTML = slice.map(r => '<tr>' + visibleCols.map(c => {
+      const v = r[c];
+      const isNum = typeof v === 'number';
+      return `<td class="${isNum?'num':''}" title="${esc(String(v||''))}">${esc(String(v||''))}</td>`;
+    }).join('') + '</tr>').join('');
+  }
+  const pag = document.getElementById('pagination');
+  pag.innerHTML = `
+    <button id="pgFirst" ${currentPage<=1?'disabled':''}>« First</button>
+    <button id="pgPrev" ${currentPage<=1?'disabled':''}>‹ Prev</button>
+    <span class="page-info">Page <strong>${currentPage}</strong> of ${totalPages.toLocaleString()}</span>
+    <button id="pgNext" ${currentPage>=totalPages?'disabled':''}>Next ›</button>
+    <button id="pgLast" ${currentPage>=totalPages?'disabled':''}>Last »</button>
+    <span class="spacer" style="flex:1"></span>
+    <span class="page-info">${PAGE_SIZE} rows / page</span>
+  `;
+  document.getElementById('pgFirst').onclick = () => { currentPage = 1; renderTable(rows); };
+  document.getElementById('pgPrev').onclick  = () => { currentPage--; renderTable(rows); };
+  document.getElementById('pgNext').onclick  = () => { currentPage++; renderTable(rows); };
+  document.getElementById('pgLast').onclick  = () => { currentPage = totalPages; renderTable(rows); };
+}
+
+function toggleColPicker(e) {
+  const pop = document.getElementById('colPickerPopover');
+  if (pop.classList.contains('hidden')) {
+    pop.innerHTML = '<div style="font-weight:600;font-size:12px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Visible columns</div>'
+      + COLUMNS.map(c => `<label><input type="checkbox" data-key="${esc(c)}" ${visibleCols.includes(c)?'checked':''}> <span>${esc(LABELS[c]||c)}</span></label>`).join('')
+      + '<div style="margin-top:10px;display:flex;gap:6px;"><button class="btn secondary" id="colAll" style="flex:1;font-size:12px;padding:5px;">All</button><button class="btn secondary" id="colReset" style="flex:1;font-size:12px;padding:5px;">Reset</button></div>';
+    pop.classList.remove('hidden');
+    pop.style.position = 'fixed';
+    pop.style.right = '40px';
+    pop.style.top = (e.target.getBoundingClientRect().bottom + 6) + 'px';
+    pop.querySelectorAll('input[type=checkbox]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const key = cb.dataset.key;
+        if (cb.checked) { if (!visibleCols.includes(key)) visibleCols.push(key); }
+        else visibleCols = visibleCols.filter(c => c !== key);
+        render();
+      });
+    });
+    document.getElementById('colAll').onclick = () => { visibleCols = COLUMNS.slice(); pop.classList.add('hidden'); render(); };
+    document.getElementById('colReset').onclick = () => { visibleCols = DEFAULT_COLS.filter(c => COLUMNS.includes(c)); pop.classList.add('hidden'); render(); };
+  } else pop.classList.add('hidden');
+}
+
+function exportFiltered(format) {
+  const rows = getFiltered();
+  if (!rows.length) { showToast('Nothing to export'); return; }
+  showLoading('Building ' + format.toUpperCase() + ' for ' + rows.length.toLocaleString() + ' rows…');
+  setTimeout(() => {
+    try {
+      if (format === 'csv') {
+        const headers = visibleCols.map(c => LABELS[c] || c);
+        const lines = [headers.map(csvEscape).join(',')];
+        for (let i = 0; i < rows.length; i++) lines.push(visibleCols.map(c => csvEscape(rows[i][c])).join(','));
+        downloadBlob(new Blob([lines.join('\n')], { type:'text/csv;charset=utf-8;' }), 'mlgn_' + new Date().toISOString().slice(0,10) + '.csv');
+      } else {
+        const aoa = [visibleCols.map(c => LABELS[c] || c)];
+        for (let i = 0; i < rows.length; i++) aoa.push(visibleCols.map(c => rows[i][c]));
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'MLGN');
+        XLSX.writeFile(wb, 'mlgn_' + new Date().toISOString().slice(0,10) + '.xlsx');
+      }
+      hideLoading(); showToast('Exported ' + rows.length.toLocaleString() + ' rows');
+    } catch(err) { hideLoading(); showToast('Export failed: ' + err.message); console.error(err); }
+  }, 50);
+}
+function csvEscape(v) { return '"' + String(v ?? '').replace(/"/g, '""') + '"'; }
+function downloadBlob(blob, fn) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); }
+
+function openDB() { return new Promise((resolve, reject) => { const req = indexedDB.open(DB_NAME, 1); req.onupgradeneeded = () => req.result.createObjectStore(DB_STORE); req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error); }); }
+function loadFromIndexedDB() { return openDB().then(db => new Promise((resolve, reject) => { const tx = db.transaction(DB_STORE, 'readonly'); const r = tx.objectStore(DB_STORE).get(DB_KEY); r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error); })); }
+function saveToIndexedDB(payload) { return openDB().then(db => new Promise((resolve, reject) => { const tx = db.transaction(DB_STORE, 'readwrite'); const r = tx.objectStore(DB_STORE).put(payload, DB_KEY); r.onsuccess = () => resolve(); r.onerror = () => reject(r.error); })); }
+
+function formatGST(d) {
+  try {
+    const parts = new Intl.DateTimeFormat('en-GB', { timeZone:'Asia/Dubai', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false }).formatToParts(d).reduce((a,p)=>(a[p.type]=p.value,a),{});
+    return parts.year + '-' + parts.month + '-' + parts.day + ' ' + parts.hour + ':' + parts.minute + ' GST';
+  } catch(e) {
+    const u = new Date(d.getTime() + 4*60*60*1000);
+    const pad = n => String(n).padStart(2,'0');
+    return u.getUTCFullYear() + '-' + pad(u.getUTCMonth()+1) + '-' + pad(u.getUTCDate()) + ' ' + pad(u.getUTCHours()) + ':' + pad(u.getUTCMinutes()) + ' GST';
+  }
+}
+function countBy(rows, key) { const c = {}; for (let i=0;i<rows.length;i++){ const v = rows[i][key]; if (v===null||v===undefined||String(v).trim()==='') continue; c[v]=(c[v]||0)+1; } return c; }
+function pct(a,b){ return b? Math.round(a/b*100)+'%':'0%'; }
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function showToast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 2400); }
+function showLoading(msg){ document.getElementById('loadingMsg').textContent = msg || 'Loading…'; document.getElementById('loading').classList.remove('hidden'); }
+function hideLoading(){ document.getElementById('loading').classList.add('hidden'); }
+
+window.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
