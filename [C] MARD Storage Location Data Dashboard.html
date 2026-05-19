@@ -591,7 +591,7 @@ function renderKPIs(rows) {
   }
   document.getElementById('kpis').innerHTML = `
     <div class="kpi"><div class="label">Total Records</div><div class="value">${total.toLocaleString()}</div><div class="meta">${matnrSet.size.toLocaleString()} distinct materials</div></div>
-    <div class="kpi teal"><div class="label">Records Touched</div><div class="value">${any.toLocaleString()} <span style="font-size:14px;color:var(--muted);font-weight:600;">(${pct(any,total)})</span></div><div class="meta">any of Reviewed / Updated / Delete</div></div>
+    <div class="kpi teal"><div class="label">Records Validated</div><div class="value">${any.toLocaleString()} <span style="font-size:14px;color:var(--muted);font-weight:600;">(${pct(any,total)})</span></div><div class="meta">any of Reviewed / Updated / Delete</div></div>
     <div class="kpi green"><div class="label">Reviewed ✓</div><div class="value">${rev.toLocaleString()} <span style="font-size:14px;color:var(--muted);font-weight:600;">(${pct(rev,total)})</span></div><div class="meta">marked Reviewed</div></div>
     <div class="kpi amber"><div class="label">Updated ✓</div><div class="value">${upd.toLocaleString()} <span style="font-size:14px;color:var(--muted);font-weight:600;">(${pct(upd,total)})</span></div><div class="meta">marked Updated</div></div>
     <div class="kpi red"><div class="label">Delete ✓</div><div class="value">${dl.toLocaleString()} <span style="font-size:14px;color:var(--muted);font-weight:600;">(${pct(dl,total)})</span></div><div class="meta">marked for Delete</div></div>
