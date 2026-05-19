@@ -22,7 +22,7 @@
     --accent: #f1f5fb;
     --green: #2e9d5a;
     --amber: #e08f1c;
-    --red: #d64545;
+    --red: #c87320;
     --grey: #8a98ad;
     --purple: #6e57d3;
     --shadow: 0 1px 3px rgba(15, 31, 61, 0.06), 0 4px 12px rgba(15, 31, 61, 0.05);
@@ -242,9 +242,9 @@
   .pill.status-not-started { background: #eceff5; color: #4d5b73; }
   .pill.status-in-progress { background: #fff4dd; color: #8a5a09; }
   .pill.status-completed   { background: #dff5e6; color: #1c6e3a; }
-  .pill.status-blocked     { background: #fde2e2; color: #9c2828; }
+  .pill.status-blocked     { background: #fff4dd; color: #8a5a09; }
   .pill.status-on-hold     { background: #ece6fa; color: #4b3aa6; }
-  .pill.status-n\/a        { background: #fce4ec; color: #88314c; }
+  .pill.status-n\/a        { background: #eceff5; color: #4d5b73; }
   .progress-bar {
     background: #eef1f7;
     border-radius: 4px;
@@ -475,15 +475,15 @@ const INITIAL_TIMESTAMP = "2026-05-19 09:16 GST";
 
 const MODULE_COLORS = {
   SD: '#1565d8', FI: '#2e9d5a', MM: '#e08f1c', WM: '#6e57d3',
-  PP: '#d64545', QM: '#0aa6a6', PM: '#b9446b'
+  PP: '#c87320', QM: '#0aa6a6', PM: '#0d7377'
 };
 const STATUS_COLORS = {
   'Not Started':  '#8a98ad',
   'In Progress':  '#e08f1c',
   'Completed':    '#2e9d5a',
-  'Blocked':      '#d64545',
+  'Blocked':      '#c87320',
   'On Hold':      '#6e57d3',
-  'N/A':          '#b9446b'
+  'N/A':          '#0d7377'
 };
 
 let DATA = [];
@@ -807,7 +807,7 @@ function renderCharts(rows) {
   });
   const dLabels = Object.keys(dCounts).sort();
   const dData = dLabels.map(l => dCounts[l]);
-  const palette = ['#1565d8','#2e9d5a','#e08f1c','#6e57d3','#d64545','#0aa6a6','#b9446b','#5b6b85'];
+  const palette = ['#1565d8','#2e9d5a','#e08f1c','#6e57d3','#c87320','#0aa6a6','#0d7377','#5b6b85'];
   const dColors = dLabels.map((_,i) => palette[i % palette.length]);
   upsertChart('chartDept', {
     type: 'bar',
