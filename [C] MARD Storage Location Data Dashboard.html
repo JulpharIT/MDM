@@ -11,7 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#f4f6fa;--card:#fff;--ink:#0f1f3d;--muted:#5b6b85;--border:#e3e8f0;--brand:#0a3d91;--brand-2:#1565d8;--accent:#f1f5fb;--green:#2e9d5a;--amber:#e08f1c;--red:#c87320;--grey:#8a98ad;--purple:#6e57d3;--teal:#0d7377;--shadow:0 1px 3px rgba(15,31,61,.06),0 4px 12px rgba(15,31,61,.05)}
+:root{--bg:#f4f6fa;--card:#fff;--ink:#0f1f3d;--muted:#5b6b85;--border:#e3e8f0;--brand:#0a3d91;--brand-2:#1565d8;--accent:#f1f5fb;--green:#0d7377;--amber:#e08f1c;--red:#c87320;--grey:#8a98ad;--purple:#6e57d3;--teal:#0d7377;--shadow:0 1px 3px rgba(15,31,61,.06),0 4px 12px rgba(15,31,61,.05)}
 *{box-sizing:border-box}html,body{margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
 header.app-header{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-2) 100%);color:#fff;padding:22px 32px;box-shadow:var(--shadow)}
@@ -591,7 +591,7 @@ function renderKPIs(rows) {
   }
   document.getElementById('kpis').innerHTML = `
     <div class="kpi"><div class="label">Total Records</div><div class="value">${total.toLocaleString()}</div><div class="meta">${matnrSet.size.toLocaleString()} distinct materials</div></div>
-    <div class="kpi teal"><div class="label">Records Validated</div><div class="value">${any.toLocaleString()} <span style="font-size:14px;color:var(--muted);font-weight:600;">(${pct(any,total)})</span></div><div class="meta">any of Reviewed / Updated / Delete</div></div>
+    <div class="kpi teal"><div class="label">Records Touched</div><div class="value">${any.toLocaleString()} <span style="font-size:14px;color:var(--muted);font-weight:600;">(${pct(any,total)})</span></div><div class="meta">any of Reviewed / Updated / Delete</div></div>
     <div class="kpi green"><div class="label">Reviewed ✓</div><div class="value">${rev.toLocaleString()} <span style="font-size:14px;color:var(--muted);font-weight:600;">(${pct(rev,total)})</span></div><div class="meta">marked Reviewed</div></div>
     <div class="kpi amber"><div class="label">Updated ✓</div><div class="value">${upd.toLocaleString()} <span style="font-size:14px;color:var(--muted);font-weight:600;">(${pct(upd,total)})</span></div><div class="meta">marked Updated</div></div>
     <div class="kpi red"><div class="label">Delete ✓</div><div class="value">${dl.toLocaleString()} <span style="font-size:14px;color:var(--muted);font-weight:600;">(${pct(dl,total)})</span></div><div class="meta">marked for Delete</div></div>
@@ -599,7 +599,7 @@ function renderKPIs(rows) {
   `;
 }
 
-const PALETTE = ['#1565d8','#2e9d5a','#e08f1c','#6e57d3','#c87320','#0aa6a6','#0d7377','#5b6b85','#3a86ff','#fb8500','#52b788','#7209b7','#d18525','#264653','#8a98ad','#0a3d91'];
+const PALETTE = ['#1565d8','#0d7377','#e08f1c','#6e57d3','#c87320','#0aa6a6','#0d7377','#5b6b85','#3a86ff','#fb8500','#fcb53b','#7209b7','#d18525','#264653','#8a98ad','#0a3d91'];
 
 function drawChart(id, type, labels, data, opts) {
   if (chartInstances[id]) chartInstances[id].destroy();
@@ -743,7 +743,7 @@ function renderCoverage(rows) {
     for (const l of lArr) {
       const c = combos[w + '|' + l] || 0;
       rowTotal += c;
-      html += '<td class="num"' + (c === 0 ? ' style="color:var(--muted);background:#fafcff;"' : (c > maxV * 0.4 ? ' style="background:#dff5e6;color:#1c6e3a;font-weight:600;"' : '')) + '>' + (c ? c.toLocaleString() : '·') + '</td>';
+      html += '<td class="num"' + (c === 0 ? ' style="color:var(--muted);background:#fafcff;"' : (c > maxV * 0.4 ? ' style="background:#e6efff;color:#0a3d91;font-weight:600;"' : '')) + '>' + (c ? c.toLocaleString() : '·') + '</td>';
     }
     html += '<td class="num"><strong>' + rowTotal.toLocaleString() + '</strong></td></tr>';
   }

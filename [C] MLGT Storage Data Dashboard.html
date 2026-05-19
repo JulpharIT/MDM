@@ -11,7 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#f4f6fa;--card:#fff;--ink:#0f1f3d;--muted:#5b6b85;--border:#e3e8f0;--brand:#0a3d91;--brand-2:#1565d8;--accent:#f1f5fb;--green:#2e9d5a;--amber:#e08f1c;--red:#c87320;--grey:#8a98ad;--purple:#6e57d3;--shadow:0 1px 3px rgba(15,31,61,.06),0 4px 12px rgba(15,31,61,.05)}
+:root{--bg:#f4f6fa;--card:#fff;--ink:#0f1f3d;--muted:#5b6b85;--border:#e3e8f0;--brand:#0a3d91;--brand-2:#1565d8;--accent:#f1f5fb;--green:#0d7377;--amber:#e08f1c;--red:#c87320;--grey:#8a98ad;--purple:#6e57d3;--shadow:0 1px 3px rgba(15,31,61,.06),0 4px 12px rgba(15,31,61,.05)}
 *{box-sizing:border-box}html,body{margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
 header.app-header{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-2) 100%);color:#fff;padding:22px 32px;box-shadow:var(--shadow)}
@@ -100,7 +100,7 @@ table.detail tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
 .coverage-table th{background:var(--accent);font-weight:600;text-align:center}
 .coverage-table th.rowhead,.coverage-table td.rowhead{text-align:left;font-weight:600;background:var(--accent);color:var(--ink)}
 .coverage-table td.zero{color:var(--muted);background:#fafcff}
-.coverage-table td.high{background:#dff5e6;color:#1c6e3a;font-weight:600}
+.coverage-table td.high{background:#e6efff;color:#0a3d91;font-weight:600}
 .coverage-table td.mid{background:#fff4dd;color:#8a5a09}
 
 .scorecard-row{display:flex;align-items:center;gap:12px;padding:6px 0;font-size:13px}
@@ -555,7 +555,7 @@ function renderKPIs(rows) {
   `;
 }
 
-const PALETTE = ['#1565d8','#2e9d5a','#e08f1c','#6e57d3','#c87320','#0aa6a6','#0d7377','#5b6b85','#3a86ff','#fb8500','#52b788','#7209b7','#d18525','#264653','#8a98ad','#0a3d91'];
+const PALETTE = ['#1565d8','#0d7377','#e08f1c','#6e57d3','#c87320','#0aa6a6','#0d7377','#5b6b85','#3a86ff','#fb8500','#fcb53b','#7209b7','#d18525','#264653','#8a98ad','#0a3d91'];
 
 function drawChart(id, type, labels, data, opts) {
   if (chartInstances[id]) chartInstances[id].destroy();

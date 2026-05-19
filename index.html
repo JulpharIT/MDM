@@ -5,327 +5,121 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="build" content="2026-05-05-v2">
+<meta name="build" content="2026-05-08-mm-v1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SAP ECC → S/4HANA — MDM Migration Dashboard</title>
+<title>Material Master · MARA · MDM Migration Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-  :root {
-    --bg: #f4f6fa;
-    --card: #ffffff;
-    --ink: #0f1f3d;
-    --muted: #5b6b85;
-    --border: #e3e8f0;
-    --brand: #0a3d91;
-    --brand-2: #1565d8;
-    --accent: #f1f5fb;
-    --green: #2e9d5a;
-    --amber: #e08f1c;
-    --red: #c87320;
-    --grey: #8a98ad;
-    --purple: #6e57d3;
-    --shadow: 0 1px 3px rgba(15, 31, 61, 0.06), 0 4px 12px rgba(15, 31, 61, 0.05);
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    font-size: 14px;
-    line-height: 1.45;
-  }
-  header.app-header {
-    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
-    color: #fff;
-    padding: 22px 32px;
-    box-shadow: var(--shadow);
-  }
-  header.app-header .row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  header.app-header h1 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-  }
-  header.app-header .sub {
-    font-size: 13px;
-    opacity: 0.85;
-    margin-top: 4px;
-  }
-  .file-zone {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(255,255,255,0.12);
-    border: 1px dashed rgba(255,255,255,0.45);
-    border-radius: 8px;
-    padding: 10px 14px;
-    cursor: pointer;
-    transition: background .15s;
-    font-size: 13px;
-  }
-  .file-zone:hover { background: rgba(255,255,255,0.2); }
-  .file-zone.drag { background: rgba(255,255,255,0.28); border-color: #fff; }
-  .file-zone input[type="file"] { display: none; }
-  .file-zone .icon {
-    width: 20px; height: 20px; display: inline-block;
-    background: rgba(255,255,255,0.85);
-    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/><polyline points='17 8 12 3 7 8'/><line x1='12' y1='3' x2='12' y2='15'/></svg>") center/contain no-repeat;
-            mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/><polyline points='17 8 12 3 7 8'/><line x1='12' y1='3' x2='12' y2='15'/></svg>") center/contain no-repeat;
-  }
-  main { padding: 0; }
+:root{--bg:#f4f6fa;--card:#fff;--ink:#0f1f3d;--muted:#5b6b85;--border:#e3e8f0;--brand:#0a3d91;--brand-2:#1565d8;--accent:#f1f5fb;--green:#0d7377;--amber:#e08f1c;--red:#c87320;--grey:#8a98ad;--purple:#6e57d3;--shadow:0 1px 3px rgba(15,31,61,.06),0 4px 12px rgba(15,31,61,.05)}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+header.app-header{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-2) 100%);color:#fff;padding:22px 32px;box-shadow:var(--shadow)}
+header.app-header .row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+header.app-header h1{margin:0;font-size:22px;font-weight:600}
+header.app-header .sub{font-size:13px;opacity:.85;margin-top:4px}
+.back-link{color:#fff;text-decoration:none;font-size:13px;opacity:.9;margin-bottom:6px;display:inline-block;padding:4px 10px;border:1px solid rgba(255,255,255,.4);border-radius:6px;background:rgba(255,255,255,.08)}
+.back-link:hover{background:rgba(255,255,255,.18);opacity:1}
+.file-zone{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.12);border:1px dashed rgba(255,255,255,.45);border-radius:8px;padding:10px 14px;cursor:pointer;transition:background .15s;font-size:13px}
+.file-zone:hover{background:rgba(255,255,255,.2)}.file-zone.drag{background:rgba(255,255,255,.28);border-color:#fff}
+.file-zone input[type=file]{display:none}
+main{padding:24px 32px 60px;max-width:1500px;margin:0 auto}
 
-  /* KPI Tiles */
-  .kpis {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 16px;
-    margin-bottom: 22px;
-  }
-  .kpi {
-    background: var(--card);
-    border-radius: 10px;
-    padding: 16px 18px;
-    box-shadow: var(--shadow);
-    border-left: 4px solid var(--brand-2);
-  }
-  .kpi.green { border-left-color: var(--green); }
-  .kpi.amber { border-left-color: var(--amber); }
-  .kpi.red { border-left-color: var(--red); }
-  .kpi.grey { border-left-color: var(--grey); }
-  .kpi.purple { border-left-color: var(--purple); }
-  .kpi .label {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--muted);
-    font-weight: 600;
-  }
-  .kpi .value {
-    font-size: 26px;
-    font-weight: 700;
-    margin-top: 4px;
-    color: var(--ink);
-  }
-  .kpi .meta {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
+.empty-state{background:#fff;border-radius:12px;padding:60px 40px;text-align:center;box-shadow:var(--shadow);border:2px dashed var(--border)}
+.empty-state h2{margin:0 0 12px;font-size:22px;color:var(--ink)}
+.empty-state p{color:var(--muted);max-width:560px;margin:0 auto 24px}
+.empty-state .big-zone{display:inline-block;padding:24px 36px;background:var(--brand);color:#fff;border-radius:8px;cursor:pointer;font-size:15px;font-weight:500;border:none}
+.empty-state .big-zone:hover{background:var(--brand-2)}
+.empty-state .big-zone.drag{background:var(--brand-2);transform:scale(1.02)}
+.empty-state .helper{font-size:12px;color:var(--muted);margin-top:18px}
 
-  /* Filters */
-  .filters {
-    background: var(--card);
-    border-radius: 10px;
-    padding: 14px 18px;
-    box-shadow: var(--shadow);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 22px;
-  }
-  .filters label {
-    font-size: 12px;
-    color: var(--muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
-  .filters select, .filters input[type="search"] {
-    padding: 8px 10px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font: inherit;
-    color: var(--ink);
-    background: #fff;
-    min-width: 130px;
-  }
-  .filters input[type="search"] { min-width: 220px; }
-  .filters .spacer { flex: 1; }
-  .btn {
-    background: var(--brand);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 14px;
-    font: inherit;
-    cursor: pointer;
-    font-weight: 500;
-  }
-  .btn.secondary {
-    background: #fff;
-    color: var(--brand);
-    border: 1px solid var(--brand);
-  }
-  .btn:hover { opacity: 0.92; }
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:22px}
+.kpi{background:var(--card);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);border-left:4px solid var(--brand-2)}
+.kpi.green{border-left-color:var(--green)}.kpi.amber{border-left-color:var(--amber)}.kpi.red{border-left-color:var(--red)}.kpi.grey{border-left-color:var(--grey)}.kpi.purple{border-left-color:var(--purple)}
+.kpi .label{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
+.kpi .value{font-size:24px;font-weight:700;margin-top:4px;color:var(--ink)}
+.kpi .meta{font-size:12px;color:var(--muted);margin-top:2px}
+.kpi .meta strong{color:var(--ink)}
 
-  /* Charts grid */
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 18px;
-    margin-bottom: 22px;
-  }
-  @media (max-width: 1100px) { .grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 720px)  { .grid { grid-template-columns: 1fr; } }
-  .panel {
-    background: var(--card);
-    border-radius: 10px;
-    padding: 16px 18px 18px;
-    box-shadow: var(--shadow);
-  }
-  .panel h2 {
-    margin: 0 0 12px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .panel h2 .hint { font-size: 11px; color: var(--muted); font-weight: 400; }
-  .chart-wrap { position: relative; height: 280px; }
-  .chart-wrap.tall { height: 380px; }
+.filters{background:var(--card);border-radius:10px;padding:14px 18px;box-shadow:var(--shadow);display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:22px}
+.filters label{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.filters select,.filters input[type=search]{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font:inherit;color:var(--ink);background:#fff;min-width:140px;max-width:260px}
+.filters input[type=search]{min-width:240px}.filters .spacer{flex:1}
+.btn{background:var(--brand);color:#fff;border:none;border-radius:6px;padding:8px 14px;font:inherit;cursor:pointer;font-weight:500}
+.btn.secondary{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+.btn.amber{background:var(--amber)}
+.btn:hover{opacity:.92}
+.btn:disabled{opacity:.5;cursor:not-allowed}
 
-  /* Table */
-  .table-panel {
-    background: var(--card);
-    border-radius: 10px;
-    padding: 16px 18px 18px;
-    box-shadow: var(--shadow);
-    margin-bottom: 22px;
-  }
-  table.detail {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  table.detail thead th {
-    text-align: left;
-    padding: 10px 8px;
-    background: var(--accent);
-    color: var(--ink);
-    font-weight: 600;
-    border-bottom: 1px solid var(--border);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    cursor: pointer;
-    user-select: none;
-    white-space: nowrap;
-  }
-  table.detail thead th:hover { background: #e6edf6; }
-  table.detail thead th .arrow { color: var(--brand-2); margin-left: 4px; font-size: 10px; }
-  table.detail tbody td {
-    padding: 9px 8px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-  }
-  table.detail tbody tr:hover { background: #fafcff; }
-  .pill {
-    display: inline-block;
-    padding: 3px 9px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-  }
-  .pill.status-not-started { background: #eceff5; color: #4d5b73; }
-  .pill.status-in-progress { background: #fff4dd; color: #8a5a09; }
-  .pill.status-completed   { background: #dff5e6; color: #1c6e3a; }
-  .pill.status-blocked     { background: #fff4dd; color: #8a5a09; }
-  .pill.status-on-hold     { background: #ece6fa; color: #4b3aa6; }
-  .pill.status-n\/a        { background: #eceff5; color: #4d5b73; }
-  .progress-bar {
-    background: #eef1f7;
-    border-radius: 4px;
-    height: 8px;
-    width: 90px;
-    overflow: hidden;
-    display: inline-block;
-    vertical-align: middle;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--brand-2), var(--green));
-    transition: width 0.3s;
-  }
-  .module-tag {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 0.5px;
-  }
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--muted);
-  }
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:22px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
+@media(max-width:1100px){.grid3{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+@media(max-width:720px){.grid3{grid-template-columns:1fr}}
 
-  footer.app-footer {
-    text-align: center;
-    color: var(--muted);
-    font-size: 12px;
-    padding: 18px;
-    border-top: 1px solid var(--border);
-    background: #fff;
-  }
+.panel{background:var(--card);border-radius:10px;padding:16px 18px 18px;box-shadow:var(--shadow);margin-bottom:22px}
+.panel h2{margin:0 0 12px;font-size:14px;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:space-between}
+.panel h2 .hint{font-size:11px;color:var(--muted);font-weight:400}
+.chart-wrap{position:relative;height:280px}
 
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--ink);
-    color: #fff;
-    padding: 10px 16px;
-    border-radius: 6px;
-    font-size: 13px;
-    box-shadow: var(--shadow);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity .25s, transform .25s;
-    pointer-events: none;
-    z-index: 50;
-  }
-  .toast.show { opacity: 1; transform: translateY(0); }
+table.detail{width:100%;border-collapse:collapse;font-size:13px}
+table.detail thead th{text-align:left;padding:10px 8px;background:var(--accent);color:var(--ink);font-weight:600;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.4px;cursor:pointer;user-select:none;white-space:nowrap;position:sticky;top:0}
+table.detail thead th:hover{background:#e6edf6}
+table.detail thead th .arrow{color:var(--brand-2);margin-left:3px;font-size:10px}
+table.detail tbody td{padding:7px 8px;border-bottom:1px solid var(--border);vertical-align:middle;white-space:nowrap;max-width:300px;overflow:hidden;text-overflow:ellipsis}
+table.detail tbody tr:hover{background:#fafcff}
+table.detail tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
 
-.nav-link{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;background:#fff;color:#0a3d91;border-radius:8px;text-decoration:none;font-weight:600;font-size:13px;border:1px solid rgba(255,255,255,.4);box-shadow:0 1px 2px rgba(0,0,0,0.08);transition:transform .12s,box-shadow .12s}
-.nav-link:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,0.15)}
-.nav-link::after{content:'→';font-size:14px;margin-left:2px}
-header.app-header .actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.scrollbox{overflow-x:auto;max-height:600px;overflow-y:auto;border:1px solid var(--border);border-radius:6px}
 
-.layout{display:flex;gap:20px;max-width:1500px;margin:0 auto;padding:24px 32px 60px;align-items:flex-start}
-.sidebar{flex:0 0 230px;background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:14px;position:sticky;top:20px;max-height:calc(100vh - 40px);overflow-y:auto}
-.sidebar-header{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-.module-nav{display:flex;flex-direction:column;gap:2px}
-.module-item{border-radius:6px}
-.module-item>summary{padding:8px 10px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:13px;color:var(--ink);border-radius:6px;user-select:none}
-.module-item>summary:hover{background:var(--accent)}
-.module-item>summary::-webkit-details-marker{display:none}
-.module-item>summary::marker{display:none;content:''}
-.module-item>summary .name{display:flex;align-items:center;gap:6px}
-.module-item>summary .name::before{content:'\25B8';font-size:9px;color:var(--muted);transition:transform .15s;display:inline-block;width:9px}
-.module-item[open]>summary .name::before{transform:rotate(90deg)}
-.module-item .count{background:var(--accent);color:var(--muted);padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}
-.module-children{padding:4px 4px 8px 24px}
-.module-children a{display:block;padding:7px 10px;font-size:13px;color:var(--brand);text-decoration:none;border-radius:4px;line-height:1.3}
-.module-children a:hover{background:var(--accent);color:var(--brand-2)}
-.module-children a::before{content:'\2192';margin-right:6px;color:var(--muted);font-size:11px}
-.module-children .none{color:var(--muted);font-size:12px;font-style:italic;padding:4px 10px;display:block}
-main.content{flex:1;min-width:0;padding:0}
-@media(max-width:980px){.layout{flex-direction:column;padding:20px 20px 60px}.sidebar{position:static;width:100%;max-height:none;flex:0 0 auto}}
+.pagination{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px}
+.pagination button{background:#fff;border:1px solid var(--border);border-radius:4px;padding:5px 10px;cursor:pointer;font:inherit}
+.pagination button:disabled{opacity:.4;cursor:not-allowed}
+.pagination .page-info{color:var(--muted)}
+
+.scorecard-row{display:flex;align-items:center;gap:12px;padding:6px 0;font-size:13px}
+.scorecard-row .name{flex:0 0 220px;font-weight:500}
+.scorecard-row .bar{flex:1;height:10px;background:#eef1f7;border-radius:4px;overflow:hidden}
+.scorecard-row .bar .fill{height:100%;background:linear-gradient(90deg,var(--grey),var(--amber),var(--green));transition:width .3s}
+.scorecard-row .bar .fill.high{background:var(--green)}
+.scorecard-row .bar .fill.mid{background:var(--amber)}
+.scorecard-row .bar .fill.low{background:var(--red)}
+.scorecard-row .pctv{flex:0 0 100px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.scorecard-cols{column-count:2;column-gap:30px}
+@media(max-width:900px){.scorecard-cols{column-count:1}}
+
+.col-picker-popover{position:absolute;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);padding:12px;max-height:400px;overflow-y:auto;width:280px;z-index:30}
+.col-picker-popover label{display:flex;align-items:center;gap:6px;font-size:13px;padding:3px 0;cursor:pointer}
+.ms-wrap{position:relative;display:inline-block}
+.ms-trigger{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font:inherit;color:var(--ink);background:#fff;min-width:160px;max-width:260px;text-align:left;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.ms-trigger:hover{border-color:var(--brand-2)}
+.ms-trigger .ms-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-trigger .ms-arrow{color:var(--muted);font-size:9px}
+.ms-trigger .ms-badge{background:var(--brand);color:#fff;border-radius:999px;font-size:10px;padding:1px 7px;font-weight:600}
+.ms-panel{position:absolute;top:calc(100% + 4px);left:0;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);padding:8px;width:300px;max-height:380px;display:flex;flex-direction:column;z-index:40}
+.ms-panel.hidden{display:none}
+.ms-search{padding:6px 8px;border:1px solid var(--border);border-radius:4px;font:inherit;font-size:13px;margin-bottom:6px}
+.ms-actions{display:flex;gap:4px;margin-bottom:6px;font-size:11px}
+.ms-actions button{background:transparent;color:var(--brand);border:none;cursor:pointer;font:inherit;padding:4px 8px;border-radius:4px;font-weight:600}
+.ms-actions button:hover{background:var(--accent)}
+.ms-list{overflow-y:auto;flex:1;border-top:1px solid var(--border);padding-top:4px}
+.ms-list label{display:flex;align-items:center;gap:6px;font-size:13px;padding:4px 6px;cursor:pointer;border-radius:4px}
+.ms-list label:hover{background:var(--accent)}
+.ms-list label .count{margin-left:auto;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.ms-list label.ms-h{display:none}
+
+footer.app-footer{text-align:center;color:var(--muted);font-size:12px;padding:18px;border-top:1px solid var(--border);background:#fff}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;box-shadow:var(--shadow);opacity:0;transform:translateY(20px);transition:opacity .25s,transform .25s;pointer-events:none;z-index:50}
+.toast.show{opacity:1;transform:translateY(0)}
+
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;z-index:100;font-size:15px;color:var(--ink);flex-direction:column;gap:14px}
+.loading-overlay .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--brand);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none !important}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;background:var(--accent);color:var(--brand)}
+.pill.warn{background:#fff4dd;color:#8a5a09}
+.pill.bad{background:#fff4dd;color:#8a5a09}
+.pill.good{background:#e6efff;color:#0a3d91}
 </style>
 </head>
 <body>
@@ -333,593 +127,841 @@ main.content{flex:1;min-width:0;padding:0}
 <header class="app-header">
   <div class="row">
     <div>
-      <h1>SAP ECC → S/4HANA · Master Data Migration Dashboard</h1>
-      <div class="sub" id="lastUpdated">Loading…</div>
+      <a href="[C] MDM Migration Dashboard.html" class="back-link">← MDM Migration Dashboard</a>
+      <h1>Material Master · MARA Cleansing</h1>
+      <div class="sub" id="lastUpdated">No data loaded · upload your Material Master Excel to begin</div>
     </div>
-    <label class="file-zone" id="fileZone" title="Drop or pick the latest 'Master data Status details.xlsx' to refresh">
-      <span class="icon"></span>
+    <label class="file-zone" id="fileZone" title="Drop or pick the latest General Material Data export to refresh">
       <span>Refresh from Excel</span>
       <input type="file" id="fileInput" accept=".xlsx,.xls" />
     </label>
   </div>
 </header>
 
-<div class="layout">
+<main>
 
-<aside class="sidebar">
-  <div class="sidebar-header">Modules</div>
-  <nav class="module-nav">
-    <details class="module-item">
-      <summary><span class="name">SD</span><span class="count">11</span></summary>
-      <div class="module-children"><span class="none">No drill-down yet</span></div>
-    </details>
-    <details class="module-item">
-      <summary><span class="name">FI</span><span class="count">6</span></summary>
-      <div class="module-children"><span class="none">No drill-down yet</span></div>
-    </details>
-    <details class="module-item" open>
-      <summary><span class="name">MM</span><span class="count">21</span></summary>
-      <div class="module-children">
-        <a href="[C] Material Master Dashboard.html" target="_blank" rel="noopener">Material Master</a>
-        <a href="[C] MARM Units of Measure Dashboard.html" target="_blank" rel="noopener">Units of Measure (MARM)</a>
-        <a href="[C] MVKE Sales Data Dashboard.html" target="_blank" rel="noopener">Sales Data (MVKE)</a>
-        <a href="[C] MARD Storage Location Data Dashboard.html" target="_blank" rel="noopener">Storage Location Data (MARD)</a>
-      </div>
-    </details>
-    <details class="module-item">
-      <summary><span class="name">WM</span><span class="count">6</span></summary>
-      <div class="module-children">
-        <a href="[C] MLGT Storage Data Dashboard.html" target="_blank" rel="noopener">Material Storage Data (MLGT)</a>
-        <a href="[C] MLGN Warehouse Data Dashboard.html" target="_blank" rel="noopener">Material Warehouse Data (MLGN)</a>
-      </div>
-    </details>
-    <details class="module-item">
-      <summary><span class="name">PP</span><span class="count">11</span></summary>
-      <div class="module-children"><span class="none">No drill-down yet</span></div>
-    </details>
-    <details class="module-item">
-      <summary><span class="name">QM</span><span class="count">2</span></summary>
-      <div class="module-children"><span class="none">No drill-down yet</span></div>
-    </details>
-    <details class="module-item">
-      <summary><span class="name">PM</span><span class="count">17</span></summary>
-      <div class="module-children"><span class="none">No drill-down yet</span></div>
-    </details>
-  </nav>
-</aside>
+<!-- Empty state -->
+<div id="emptyState" class="empty-state">
+  <h2>Drop your Material Master Excel to begin</h2>
+  <p>Upload your latest <code>General Material Data-MARA-*.XLSX</code> export. The dashboard will profile <strong>MATNR</strong>, <strong>BISMT</strong>, <strong>MTART</strong>, completeness, duplicates, and legacy candidates — all in your browser, nothing leaves your machine.</p>
+  <button class="big-zone" id="bigUpload">Upload Material Master file</button>
+  <div class="helper">Files up to ~50&nbsp;MB and 200k rows have been tested. Your data persists locally (IndexedDB) so you only need to upload again when the source changes.</div>
+</div>
 
-<main class="content">
+<!-- Active dashboard (hidden until data loads) -->
+<div id="dashboard" class="hidden">
+
   <!-- KPIs -->
   <div class="kpis" id="kpis"></div>
 
   <!-- Filters -->
   <div class="filters">
-    <label>Module</label>
-    <select id="fltModule"><option value="">All modules</option></select>
-    <label>Status</label>
-    <select id="fltStatus"><option value="">All statuses</option></select>
-    <label>Action By</label>
-    <select id="fltOwner"><option value="">All</option></select>
-    <label>Department</label>
-    <select id="fltDept"><option value="">All departments</option></select>
+    <label>MTART</label>
+    <div class="ms-wrap" id="msMtart"><button type="button" class="ms-trigger"><span class="ms-text">All material types</span><span class="ms-arrow">▼</span></button><div class="ms-panel hidden"></div></div>
+    <label>Comments from IT</label>
+    <div class="ms-wrap" id="msComments"><button type="button" class="ms-trigger"><span class="ms-text">All comments</span><span class="ms-arrow">▼</span></button><div class="ms-panel hidden"></div></div>
+    <label>MATKL</label>
+    <div class="ms-wrap" id="msMatkl"><button type="button" class="ms-trigger"><span class="ms-text">All material groups</span><span class="ms-arrow">▼</span></button><div class="ms-panel hidden"></div></div>
     <label>Search</label>
-    <input type="search" id="fltSearch" placeholder="Search table, description…">
+    <input type="search" id="fltSearch" placeholder="MATNR, description, BISMT…">
     <span class="spacer"></span>
     <button class="btn secondary" id="btnReset">Reset</button>
-    <button class="btn" id="btnExport">Export CSV</button>
   </div>
 
-  <!-- Charts row -->
-  <div class="grid">
+  <!-- Charts -->
+  <div class="grid3">
+    <div class="panel"><h2>By Material Type (MTART) <span class="hint">distribution</span></h2><div class="chart-wrap"><canvas id="chartMtart"></canvas></div></div>
+    <div class="panel"><h2>By Material Group (MATKL) <span class="hint">top 15</span></h2><div class="chart-wrap"><canvas id="chartMatkl"></canvas></div></div>
+    <div class="panel"><h2>By Base Unit (MEINS) <span class="hint">top 10</span></h2><div class="chart-wrap"><canvas id="chartMeins"></canvas></div></div>
+  </div>
+
+  <!-- Insights -->
+  <div class="grid2">
     <div class="panel">
-      <h2>Status Overview <span class="hint">across all tables</span></h2>
-      <div class="chart-wrap"><canvas id="chartStatus"></canvas></div>
+      <h2>Data Completeness Scorecard <span class="hint">% populated per field (filtered scope)</span></h2>
+      <div id="scorecard" class="scorecard-cols"></div>
     </div>
     <div class="panel">
-      <h2>Tables by Module <span class="hint">scope distribution</span></h2>
-      <div class="chart-wrap"><canvas id="chartModule"></canvas></div>
-    </div>
-    <div class="panel">
-      <h2>Overdue Tables by Module <span class="hint">past Exp. End, not Completed</span></h2>
-      <div class="chart-wrap"><canvas id="chartProgress"></canvas></div>
+      <h2>Legacy / Obsolete Indicators <span class="hint">cleanse-or-archive candidates</span></h2>
+      <div id="legacyPanel"></div>
     </div>
   </div>
 
-  <!-- Department workload -->
-  <div class="panel" style="margin-bottom: 22px;">
-    <h2>Workload by Department <span class="hint">tables grouped by Data Owner (Dept.)</span></h2>
-    <div class="chart-wrap"><canvas id="chartDept"></canvas></div>
+  <div class="panel">
+    <h2>Suspect Duplicate BISMTs <span class="hint">old material number used by 2+ records — review for dedup</span></h2>
+    <div id="duplicatePanel"></div>
   </div>
 
   <!-- Detail table -->
-  <div class="table-panel">
-    <h2 style="margin: 0 0 12px;">Master Data Tables <span class="hint" id="rowCount" style="font-weight: 400; color: var(--muted); font-size:11px;"></span></h2>
-    <div style="overflow-x: auto;">
+  <div class="panel" style="position:relative;">
+    <h2 style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <span>Detail Grid <span class="hint" id="rowCount" style="color:var(--muted);font-weight:400;font-size:11px;"></span></span>
+      <span style="display:flex;gap:8px;align-items:center;">
+        <button class="btn secondary" id="btnColPicker">Columns</button>
+        <button class="btn secondary" id="btnExportCsv">Export CSV</button>
+        <button class="btn" id="btnExportXlsx">Export Excel</button>
+      </span>
+    </h2>
+    <div id="colPickerPopover" class="col-picker-popover hidden"></div>
+    <div class="scrollbox">
       <table class="detail" id="detailTable">
-        <thead>
-          <tr>
-            <th data-key="module">Module</th>
-            <th data-key="dataType">Data Type</th>
-            <th data-key="table">Table</th>
-            <th data-key="description">Description</th>
-            <th data-key="actionBy">Action By</th>
-            <th data-key="startDate">Start</th>
-            <th data-key="endDate">Exp. End</th>
-            <th data-key="actualEndDate">Actual End</th>
-            <th data-key="status">Status</th>
-            <th data-key="dataOwner">Data Owner (Dept.)</th>
-            <th data-key="comments">Comments</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
+        <thead><tr id="detailHead"></tr></thead>
+        <tbody id="detailBody"></tbody>
       </table>
     </div>
+    <div class="pagination" id="pagination"></div>
   </div>
-</main>
 
 </div>
 
+</main>
+
 <footer class="app-footer">
-  Read-only reporting view of <code>Master data Status details.xlsx</code> (MAIN sheet). Refresh by dropping the latest file above. Source of truth remains SharePoint.
+  Read-only reporting view of the SAP <code>MARA</code> Material Master export. All processing happens locally in your browser.
 </footer>
 
 <div class="toast" id="toast"></div>
+<div class="loading-overlay hidden" id="loading"><div class="spinner"></div><div id="loadingMsg">Loading…</div></div>
 
 <script>
 /* ============================================================
-   EMBEDDED DATA — initial snapshot from Master data Status details.xlsx
-   Replace by dropping a new Excel file on the "Refresh from Excel" button.
+   MATERIAL MASTER DASHBOARD
+   Self-contained — data uploaded by user, persisted via IndexedDB
 ============================================================ */
-const INITIAL_DATA = [{"module":"SD","dataType":"Customer Master","table":"KNA1","description":"General Data in Customer Master","startDate":"2026-04-28","endDate":"2026-10-05","actualEndDate":"2026-10-05","actionBy":"Sheena","status":"Completed","comments":"All corrections provided by the business have been completed, and it has been confirmed that all customers will be migrated to S/4HANA without any exclusions.","dataOwner":"Finance"},{"module":"SD","dataType":"Customer Master","table":"KNB1","description":"Customer Master (Company Code)","startDate":"2026-04-28","endDate":"2026-10-05","actualEndDate":"2026-10-05","actionBy":"Sheena","status":"Completed","comments":"All corrections provided by the business have been completed, and it has been confirmed that all customers will be migrated to S/4HANA without any exclusions.","dataOwner":"Finance"},{"module":"SD","dataType":"Customer Master","table":"KNVV","description":"Customer Master Sales Data","startDate":"2026-04-28","endDate":"2026-10-05","actualEndDate":"2026-10-05","actionBy":"Sheena","status":"Completed","comments":"All corrections provided by the business have been completed, and it has been confirmed that all customers will be migrated to S/4HANA without any exclusions.","dataOwner":"Finance"},{"module":"SD","dataType":"Pricing Master Data","table":"KONV","description":"Conditions (Transaction Data)","startDate":"2026-05-13","endDate":"2026-06-15","actualEndDate":"2026-06-15","actionBy":"Sheena","status":"In Progress","comments":"18-05-2026:","dataOwner":"Sales"},{"module":"SD","dataType":"Pricing Master Data","table":"KONP","description":"Conditions (Item)","startDate":"2026-05-13","endDate":"2026-06-15","actualEndDate":"2026-06-15","actionBy":"Sheena","status":"In Progress","comments":"","dataOwner":"Sales"},{"module":"SD","dataType":"Pricing Master Data","table":"KONH","description":"Conditions (Header)","startDate":"2026-05-13","endDate":"2026-06-15","actualEndDate":"2026-06-15","actionBy":"Sheena","status":"In Progress","comments":"","dataOwner":"Sales"},{"module":"SD","dataType":"Pricing Master Data","table":"A305","description":"Customer/material with release status","startDate":"2026-05-13","endDate":"2026-06-15","actualEndDate":"2026-06-15","actionBy":"Sheena","status":"In Progress","comments":"","dataOwner":"Sales"},{"module":"SD","dataType":"Pricing Master Data","table":"A304","description":"Material with release status","startDate":"2026-05-13","endDate":"2026-06-15","actualEndDate":"2026-06-15","actionBy":"Sheena","status":"In Progress","comments":"","dataOwner":"Sales"},{"module":"SD","dataType":"Credit master data","table":"KNVV","description":"Credit master data details","startDate":"2026-05-13","endDate":"2026-05-15","actualEndDate":"2026-05-15","actionBy":"Sheena","status":"Completed","comments":"All corrections provided by the business have been completed, and it has been confirmed that all customer credit details will be migrated to S/4HANA without any exclusions.","dataOwner":"Finance"},{"module":"FI","dataType":"General Ledger (FI-GL)","table":"SKA1","description":"G/L Account Master (Chart of Accounts)","startDate":"2026-07-05","endDate":"2026-05-22","actualEndDate":"","actionBy":"Prasad","status":"Not Started","comments":"","dataOwner":""},{"module":"FI","dataType":"General Ledger (FI-GL)","table":"SKB1","description":"G/L account master (company code)","startDate":"2026-07-05","endDate":"2026-05-22","actualEndDate":"","actionBy":"Prasad","status":"Not Started","comments":"","dataOwner":""},{"module":"FI","dataType":"Asset Accounting (FI-AA)","table":"ANLA","description":"Asset Master Record Segment","startDate":"2026-05-19","endDate":"2026-05-06","actualEndDate":"","actionBy":"Prasad","status":"Not Started","comments":"","dataOwner":""},{"module":"FI","dataType":"Asset Accounting (FI-AA)","table":"ANLB","description":"Depreciation terms","startDate":"2026-05-19","endDate":"2026-05-06","actualEndDate":"","actionBy":"Prasad","status":"Not Started","comments":"","dataOwner":""},{"module":"FI","dataType":"Controlling (CO)","table":"CSKS","description":"Cost Center Master Data","startDate":"2026-05-19","endDate":"2026-05-06","actualEndDate":"","actionBy":"Prasad","status":"Not Started","comments":"","dataOwner":""},{"module":"FI","dataType":"Controlling (CO)","table":"CSKT","description":"Cost Center Texts","startDate":"2026-05-19","endDate":"2026-05-06","actualEndDate":"","actionBy":"Prasad","status":"Not Started","comments":"","dataOwner":""},{"module":"MM","dataType":"Material Master","table":"MARA","description":"General Material Data","startDate":"2026-07-05","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Radha & Arvind","status":"Not Started","comments":"11-05-2026:Shared to business","dataOwner":"Supply Chain"},{"module":"MM","dataType":"Material Master","table":"MARC","description":"Plant Data for Material","startDate":"2026-07-05","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Radha & Arvind","status":"Not Started","comments":"11-05-2026:Shared to business","dataOwner":"Supply Chain"},{"module":"MM","dataType":"Material Master","table":"MBEW","description":"Material Valuation","startDate":"2026-05-14","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Radha & Arvind","status":"Not Started","comments":"14-05-2026:Shared to business","dataOwner":"Finance"},{"module":"MM","dataType":"Material Master","table":"MARD","description":"Storage Location Data for Material","startDate":"2026-05-20","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Radha","status":"Not Started","comments":"","dataOwner":""},{"module":"MM","dataType":"Material Master","table":"MARM","description":"Units of Measure for Material","startDate":"2026-12-05","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Radha & Arvind","status":"Not Started","comments":"12-05-2026:Shared to business","dataOwner":"Stores"},{"module":"MM","dataType":"Material Master","table":"MVKE","description":"Sales Data for Material","startDate":"2026-05-13","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Radha & Arvind","status":"Not Started","comments":"13-05-2026:Shared to business","dataOwner":"Sales & Tender"},{"module":"MM","dataType":"Vendor Master","table":"LFA1","description":"Vendor Master (General Section)","startDate":"2026-04-30","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Arvind & Prasad","status":"In Progress","comments":"01.05.2026:  Pending for the business confirmation. Every Week schduling the call with Business to confirm for the same","dataOwner":"Finance & Procurement department"},{"module":"MM","dataType":"Vendor Master","table":"LFB1","description":"Vendor Master (Company Code)","startDate":"2026-04-30","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Arvind & Prasad","status":"In Progress","comments":"01.05.2026:  Pending for the business confirmation. Every Week schduling the call with Business to confirm for the same","dataOwner":""},{"module":"MM","dataType":"Vendor Master","table":"LFBK","description":"Vendor Master (Bank Details)","startDate":"2026-04-30","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Arvind & Prasad","status":"In Progress","comments":"01.05.2026:  Pending for the business confirmation. Every Week schduling the call with Business to confirm for the same","dataOwner":""},{"module":"MM","dataType":"Vendor Master","table":"LFM1","description":"Vendor master record purchasing organization data","startDate":"2026-04-30","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Arvind & Prasad","status":"In Progress","comments":"01.05.2026:  Pending for the business confirmation. Every Week schduling the call with Business to confirm for the same","dataOwner":""},{"module":"MM","dataType":"Source List","table":"EORD","description":"Purchasing Source List","startDate":"2026-05-18","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Radha","status":"Not Started","comments":"","dataOwner":""},{"module":"MM","dataType":"Purchasing Info Record","table":"EINA","description":"Purchasing Info Record: General Data","startDate":"2026-05-18","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Radha","status":"Not Started","comments":"","dataOwner":""},{"module":"MM","dataType":"Purchasing Info Record","table":"EINE","description":"Purchasing Info Record: Purchasing Organization Data","startDate":"2026-05-18","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Radha","status":"Not Started","comments":"","dataOwner":""},{"module":"WM","dataType":"Master Data","table":"MLGN","description":"Material Data for Each Warehouse Number","startDate":"2026-05-18","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Arvind","status":"In Progress","comments":"18.05.2026:  Pending for the business confirmation.","dataOwner":""},{"module":"WM","dataType":"Master Data","table":"MLGT","description":"Material Data for Each Storage Type","startDate":"2026-05-18","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Arvind","status":"In Progress","comments":"18.05.2026:  Pending for the business confirmation.","dataOwner":""},{"module":"WM","dataType":"Storage Bin Master","table":"LAGP","description":"Storage bins","startDate":"2026-05-19","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Arvind","status":"In Progress","comments":"","dataOwner":""},{"module":"PP","dataType":"Resource Master","table":"CRCA","description":"Work Center Capacity Allocation","startDate":"2026-05-19","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Rifai","status":"Not Started","comments":"19.05.2026:  Pending for the business confirmation.","dataOwner":"Finance ( share all resource and cost center )"},{"module":"PP","dataType":"Resource Master","table":"KAKO","description":"Capacity Header Segment","startDate":"2026-05-19","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Rifai","status":"Not Started","comments":"","dataOwner":""},{"module":"PP","dataType":"Resource Master","table":"CRHD","description":"Work Center Header","startDate":"2026-05-19","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Rifai","status":"Not Started","comments":"","dataOwner":""},{"module":"PP","dataType":"Resource Master","table":"CRTX","description":"Text for the Work Center or Production Resource/Tool","startDate":"2026-05-19","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Rifai","status":"Not Started","comments":"","dataOwner":""},{"module":"PP","dataType":"BOM","table":"MAST","description":"Material to BOM Link","startDate":"2026-05-18","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Rifai","status":"In Progress","comments":"18.05.2026: sent email and pending for the business confirmation ( only for F.P codes )","dataOwner":"MA"},{"module":"PP","dataType":"BOM","table":"STKO","description":"BOM Header","startDate":"2026-05-18","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Rifai","status":"Not Started","comments":"","dataOwner":""},{"module":"PP","dataType":"BOM","table":"STPO","description":"BOM item","startDate":"2026-05-18","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Rifai","status":"Not Started","comments":"","dataOwner":""},{"module":"PP","dataType":"Matser Recipe","table":"MAPL","description":"Assignment of Task Lists to Materials","startDate":"2026-05-20","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Rifai","status":"Not Started","comments":"","dataOwner":""},{"module":"PP","dataType":"Matser Recipe","table":"PLKO","description":"Task list - header","startDate":"2026-05-20","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Rifai","status":"Not Started","comments":"","dataOwner":""},{"module":"PP","dataType":"Matser Recipe","table":"PLPO","description":"Task list - operation/activity","startDate":"2026-05-20","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Rifai","status":"Not Started","comments":"","dataOwner":""},{"module":"PP","dataType":"Production Version","table":"MKAL","description":"Production Versions of Material","startDate":"2026-05-18","endDate":"2026-02-06","actualEndDate":"2026-05-06","actionBy":"Rifai","status":"In Progress","comments":"18.05.2026: sent email and pending for the business confirmation ( only for F.P codes )","dataOwner":"MA"},{"module":"QM","dataType":"Task List","table":"MAPL","description":"Assignment of Task Lists to Materials","startDate":"","endDate":"","actualEndDate":"","actionBy":"Naveed","status":"Not Started","comments":"consultation required with  Salah Mohana to to donwnload with utility, Huge data will come in multipale sheets.","dataOwner":""},{"module":"QM","dataType":"Task List","table":"QMAT","description":"Inspection type - material parameters","startDate":"","endDate":"","actualEndDate":"","actionBy":"Naveed","status":"Not Started","comments":"","dataOwner":""},{"module":"QM","dataType":"Quality Info Record","table":"QINF","description":"QM-info record for material and vendor","startDate":"2026-05-22","endDate":"2026-06-30","actualEndDate":"","actionBy":"Naveed","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Equipment Master","table":"EQUI","description":"Equipment master data","startDate":"2026-05-14","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"14-05-2026:Shared to business","dataOwner":""},{"module":"PM","dataType":"Equipment Master","table":"EQKT","description":"Equipment Short Texts","startDate":"2026-05-14","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"14-05-2026:Shared to business","dataOwner":""},{"module":"PM","dataType":"Equipment Master","table":"EQUZ","description":"Equipment time segment","startDate":"2026-05-14","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"14-05-2026:Shared to business","dataOwner":""},{"module":"PM","dataType":"Equipment Master","table":"ILOA","description":"PM Object Location and Account Assignment","startDate":"2026-05-14","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"14-05-2026:Shared to business","dataOwner":""},{"module":"PM","dataType":"Functional Location Master","table":"IFLOT","description":"Functional Location (Table)","startDate":"2026-05-21","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Functional Location Master","table":"IFLOTX","description":"Functional Location: Short Texts","startDate":"2026-05-21","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Functional Location Master","table":"ILOA","description":"PM Object Location and Account Assignment","startDate":"2026-05-21","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Equipment BOM Master","table":"MAST","description":"Material to BOM Link","startDate":"2026-05-22","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Equipment BOM Master","table":"STKO","description":"BOM Header","startDate":"2026-05-22","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Equipment BOM Master","table":"STPO","description":"BOM item","startDate":"2026-05-22","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Maintenance Task List","table":"PLKO","description":"Task list - header","startDate":"2026-05-20","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Maintenance Task List","table":"PLPO","description":"Task list - operation/activity","startDate":"2026-05-20","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Maintenance Task List","table":"PLAS","description":"PLAS","startDate":"2026-05-20","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Maintenance Plan","table":"MPLA","description":"Task list - selection of operations/activities","startDate":"2026-05-22","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Maintenance Plan","table":"MPOS","description":"Maintenance item","startDate":"2026-05-22","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Maintenance Work Center","table":"CRHD","description":"Work Center Header","startDate":"2026-05-22","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""},{"module":"PM","dataType":"Maintenance Work Center","table":"CRTX","description":"Text for the Work Center or Production Resource/Tool","startDate":"2026-05-22","endDate":"2026-02-06","actualEndDate":"","actionBy":"Mahmoud Mhanna","status":"Not Started","comments":"","dataOwner":""}];
-const DATA_VERSION = "v3-2026-05-14-expend-actualend";
-const INITIAL_TIMESTAMP = "2026-05-19 09:16 GST";
 
-const MODULE_COLORS = {
-  SD: '#1565d8', FI: '#2e9d5a', MM: '#e08f1c', WM: '#6e57d3',
-  PP: '#c87320', QM: '#0aa6a6', PM: '#0d7377'
-};
-const STATUS_COLORS = {
-  'Not Started':  '#8a98ad',
-  'In Progress':  '#e08f1c',
-  'Completed':    '#2e9d5a',
-  'Blocked':      '#c87320',
-  'On Hold':      '#6e57d3',
-  'N/A':          '#0d7377'
+// SAP technical field names (row 1 of the Excel) and their display labels (row 2)
+// We auto-detect from the file but keep these as fallback labels.
+const FIELD_LABELS = {
+  '_comments_it': 'Comments from IT',
+  '_remarks_business': 'Remarks/Feedback from Business',
+  'MATNR': 'Material',
+  'MAKTX': 'Material Description',
+  'ERSDA': 'Created On',
+  'LAEDA': 'Last Change',
+  'LVORM': 'DF at client level',
+  'MSTAE': 'X-plant matl status',
+  'MTART': 'Material Type',
+  'MBRSH': 'Industry sector',
+  'MATKL': 'Material Group',
+  'BISMT': 'Old Material Number',
+  'MEINS': 'Base Unit of Measure',
+  'BSTME': 'Order Unit',
+  'GROES': 'Size/Dimensions',
+  'WRKST': 'Basic material',
+  'NORMT': 'Industry Std Desc.',
+  'EKWSL': 'Purchasing value key',
+  'BRGEW': 'Gross Weight',
+  'NTGEW': 'Net Weight',
+  'GEWEI': 'Weight unit',
+  'VOLUM': 'Volume',
+  'VOLEH': 'Volume unit',
+  'RAUBE': 'Storage conditions',
+  'TEMPB': 'Temp. conditions',
+  'DISST': 'Low-Level Code',
+  'TRAGR': 'Transportation Group',
+  'SPART': 'Division',
+  'QMPUR': 'QM proc. active',
+  'VABME': 'Variable Purchase Order Unit',
+  'XCHPF': 'Batch management',
+  'EXTWG': 'Ext. Material Group',
+  'MSTAV': 'X-distr.chain status',
+  'MHDRZ': 'Min. Rem. Shelf Life',
+  'MHDHB': 'Total shelf life',
+  'MFRPN': 'Manufacturer Part No.',
+  'XGCHP': 'Appr.batch rec. req.',
+  'KZEFF': 'Assign effect. vals',
+  'IPRKZ': 'Period Ind. for SLED',
+  'RDMHD': 'Rounding rule SLED',
+  'MTPOS_MARA': 'Gen. item cat. grp',
+  'MATFI': 'Material is locked',
+  'SLED_BBD': 'Expiration Date'
 };
 
-let DATA = [];
-let charts = {};
-let sortState = { key: 'module', dir: 1 };
+// Default visible columns in the table (when 44 cols would be too wide)
+const DEFAULT_COLS = ['_comments_it','_remarks_business','MATNR','MAKTX','MTART','MATKL','BISMT','MEINS','LVORM','MSTAE','ERSDA','LAEDA'];
+
+let DATA = [];           // Array of objects keyed by technical name
+let COLUMNS = [];        // Ordered list of column keys present in the data
+let LABELS = {};         // Map of column key -> display label
+let visibleCols = [];    // Currently visible columns in detail grid
+let sortState = { key: 'MATNR', dir: 1 };
+let currentPage = 1;
+const PAGE_SIZE = 50;
+let chartInstances = {};
+const FILTER_STATE = {
+  msMtart:    { key: 'MTART',         label: 'material types',  selected: new Set() },
+  msComments: { key: '_comments_it',  label: 'comments',        selected: new Set() },
+  msMatkl:    { key: 'MATKL',         label: 'material groups', selected: new Set() }
+};
+
+const DB_NAME = 'mdm_material_master';
+const DB_STORE = 'data';
+const DB_KEY = 'main';
 
 /* -------- Boot -------- */
 function boot() {
-  loadFromStorageOrInitial();
   bindUI();
-  render();
-  showToast('Dashboard ready · ' + DATA.length + ' tables loaded');
-}
-
-function loadFromStorageOrInitial() {
-  try {
-    const cached = localStorage.getItem('mdm_dashboard_data');
-    const cachedTs = localStorage.getItem('mdm_dashboard_timestamp');
-    const cachedVer = localStorage.getItem('mdm_dashboard_version');
-    if (cached && cachedVer === DATA_VERSION) {
-      DATA = JSON.parse(cached);
-      // Backward-compat: ensure every row has the new dataOwner field
-      DATA.forEach(r => { if (r.dataOwner === undefined) r.dataOwner = ''; });
-      document.getElementById('lastUpdated').textContent =
-        'Last refreshed: ' + (cachedTs || 'unknown') + ' · ' + DATA.length + ' tables';
-      return;
+  showLoading('Loading saved data…');
+  loadFromIndexedDB().then(saved => {
+    hideLoading();
+    if (saved && saved.rows && saved.rows.length) {
+      applyData(saved.rows, saved.columns, saved.labels, saved.timestamp);
+      showToast('Loaded ' + saved.rows.length.toLocaleString() + ' materials from saved cache');
     }
-    // Stale cache (older schema) — discard and fall through to INITIAL_DATA
-    if (cached && cachedVer !== DATA_VERSION) {
-      localStorage.removeItem('mdm_dashboard_data');
-      localStorage.removeItem('mdm_dashboard_timestamp');
-      localStorage.removeItem('mdm_dashboard_version');
-    }
-  } catch(e) { /* ignore */ }
-  DATA = JSON.parse(JSON.stringify(INITIAL_DATA));
-  document.getElementById('lastUpdated').textContent =
-    'Initial snapshot · ' + INITIAL_TIMESTAMP + ' · ' + DATA.length + ' tables';
+  }).catch(e => {
+    hideLoading();
+    console.error('IndexedDB load failed:', e);
+  });
 }
 
 function bindUI() {
   const fz = document.getElementById('fileZone');
   const fi = document.getElementById('fileInput');
+  const big = document.getElementById('bigUpload');
   fz.addEventListener('click', () => fi.click());
-  fi.addEventListener('change', (e) => {
-    if (e.target.files.length) handleFile(e.target.files[0]);
+  big.addEventListener('click', () => fi.click());
+  fi.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+  ['dragenter','dragover'].forEach(ev => {
+    fz.addEventListener(ev, e => { e.preventDefault(); fz.classList.add('drag'); });
+    big.addEventListener(ev, e => { e.preventDefault(); big.classList.add('drag'); });
   });
-  ['dragenter','dragover'].forEach(ev =>
-    fz.addEventListener(ev, e => { e.preventDefault(); fz.classList.add('drag'); }));
-  ['dragleave','drop'].forEach(ev =>
-    fz.addEventListener(ev, e => { e.preventDefault(); fz.classList.remove('drag'); }));
-  fz.addEventListener('drop', e => {
-    if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+  ['dragleave','drop'].forEach(ev => {
+    fz.addEventListener(ev, e => { e.preventDefault(); fz.classList.remove('drag'); });
+    big.addEventListener(ev, e => { e.preventDefault(); big.classList.remove('drag'); });
+  });
+  fz.addEventListener('drop', e => { if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+  big.addEventListener('drop', e => { if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+  // Document-wide drop (fallback)
+  document.addEventListener('dragover', e => e.preventDefault());
+  document.addEventListener('drop', e => {
+    if (e.target.closest('.empty-state, .file-zone')) return; // already handled
+    e.preventDefault();
   });
 
-  ['fltModule','fltStatus','fltOwner','fltDept','fltSearch'].forEach(id =>
-    document.getElementById(id).addEventListener('input', render));
-
+  document.getElementById('fltSearch').addEventListener('input', () => { currentPage = 1; render(); });
   document.getElementById('btnReset').addEventListener('click', () => {
-    ['fltModule','fltStatus','fltOwner','fltDept','fltSearch'].forEach(id => document.getElementById(id).value = '');
-    render();
-  });
-  document.getElementById('btnExport').addEventListener('click', exportCSV);
-
-  document.querySelectorAll('#detailTable thead th').forEach(th => {
-    th.addEventListener('click', () => {
-      const key = th.dataset.key;
-      sortState.dir = (sortState.key === key) ? -sortState.dir : 1;
-      sortState.key = key;
-      renderTable();
+    document.getElementById('fltSearch').value = '';
+    Object.keys(FILTER_STATE).forEach(id => {
+      FILTER_STATE[id].selected.clear();
+      const wrap = document.getElementById(id);
+      if (wrap) wrap.querySelectorAll('.ms-list input').forEach(cb => cb.checked = false);
+      updateMsTrigger(id);
     });
+    currentPage = 1; render();
+  });
+  // Close multi-select panels on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.ms-wrap')) {
+      document.querySelectorAll('.ms-panel').forEach(p => p.classList.add('hidden'));
+    }
+  });
+  document.getElementById('btnExportCsv').addEventListener('click', () => exportFiltered('csv'));
+  document.getElementById('btnExportXlsx').addEventListener('click', () => exportFiltered('xlsx'));
+  document.getElementById('btnColPicker').addEventListener('click', toggleColPicker);
+  document.addEventListener('click', e => {
+    const pop = document.getElementById('colPickerPopover');
+    if (!pop.classList.contains('hidden') && !e.target.closest('#colPickerPopover') && !e.target.closest('#btnColPicker')) {
+      pop.classList.add('hidden');
+    }
   });
 }
 
-/* -------- Excel parsing on refresh -------- */
+/* -------- File handling -------- */
 function handleFile(file) {
+  showLoading('Reading ' + file.name + '…');
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
-      const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
-      let sheetName = wb.SheetNames.find(n => n.toUpperCase() === 'MAIN') || wb.SheetNames[0];
-      const ws = wb.Sheets[sheetName];
-      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' });
-      const parsed = parseRows(rows);
-      if (!parsed.length) { showToast('No data rows found on MAIN sheet'); return; }
-      DATA = parsed;
-      const ts = formatGST(new Date());
-      try {
-        localStorage.setItem('mdm_dashboard_data', JSON.stringify(DATA));
-        localStorage.setItem('mdm_dashboard_timestamp', ts);
-        localStorage.setItem('mdm_dashboard_version', DATA_VERSION);
-      } catch(err) { /* quota or unavailable */ }
-      document.getElementById('lastUpdated').textContent =
-        'Last refreshed: ' + ts + ' · ' + DATA.length + ' tables';
-      render();
-      showToast('Refreshed · ' + DATA.length + ' tables loaded');
-    } catch (err) {
-      console.error(err);
-      showToast('Could not parse file: ' + err.message);
-    }
+      showLoading('Parsing workbook…');
+      // Defer to next tick so spinner shows
+      setTimeout(() => {
+        try {
+          const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true, raw: false });
+          const sheet = wb.SheetNames.find(n => n.toLowerCase().includes('clean')) || wb.SheetNames[0];
+          const ws = wb.Sheets[sheet];
+          showLoading('Converting rows…');
+          const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' });
+          const parsed = parseRows(rows);
+          if (!parsed.rows.length) { hideLoading(); showToast('No data rows found in file'); return; }
+          showLoading('Saving to local cache…');
+          const ts = formatGST(new Date());
+          saveToIndexedDB({ rows: parsed.rows, columns: parsed.columns, labels: parsed.labels, timestamp: ts })
+            .then(() => {
+              applyData(parsed.rows, parsed.columns, parsed.labels, ts);
+              hideLoading();
+              showToast('Loaded ' + parsed.rows.length.toLocaleString() + ' materials');
+            })
+            .catch(err => { hideLoading(); console.error(err); applyData(parsed.rows, parsed.columns, parsed.labels, ts); showToast('Loaded (cache save failed): ' + err.message); });
+        } catch(err) { hideLoading(); console.error(err); showToast('Could not parse: ' + err.message); }
+      }, 50);
+    } catch(err) { hideLoading(); console.error(err); showToast('Read error: ' + err.message); }
   };
+  reader.onerror = () => { hideLoading(); showToast('File read error'); };
   reader.readAsArrayBuffer(file);
 }
 
 function parseRows(rows) {
-  if (!rows.length) return [];
-  // Find header row — match on "Module" + "Table"
-  let headerIdx = 0;
-  for (let i = 0; i < Math.min(rows.length, 5); i++) {
-    const r = rows[i].map(x => String(x||'').trim().toLowerCase());
-    if (r.includes('module') && r.includes('table')) { headerIdx = i; break; }
-  }
-  const headers = rows[headerIdx].map(x => String(x||'').trim().toLowerCase());
-  // Robust column finder: matches startsWith OR includes the search term
-  const idx = (...names) => {
-    for (const n of names) {
-      const i = headers.findIndex(h => h.startsWith(n));
-      if (i !== -1) return i;
-    }
-    for (const n of names) {
-      const i = headers.findIndex(h => h.includes(n));
-      if (i !== -1) return i;
-    }
-    return -1;
-  };
-  const cMod = idx('module'),
-        cDt  = idx('data type'),
-        cTbl = idx('table'),
-        cDesc = idx('description'),
-        cStart = idx('start'),
-        // For end-date columns, prefer "exp" (expected/planned) for the main end date
-        cEnd = (function(){
-          // Try "exp. end" / "exp end" / "expected end" first
-          let i = headers.findIndex(h => /exp.*end|expected.*end/.test(h));
-          if (i !== -1) return i;
-          // Fallback to original behaviour
-          i = headers.findIndex(h => h.startsWith('it end'));
-          if (i !== -1) return i;
-          return headers.findIndex(h => h.startsWith('end'));
-        })(),
-        cActual = headers.findIndex(h => /actual.*end/.test(h)),
-        cBy = idx('action'),
-        cProg = idx('progress'),
-        cStatus = idx('status'),
-        cComm = idx('comment'),
-        cOwner = idx('data owner','department','dept');
+  if (!rows.length) return { rows: [], columns: [], labels: {} };
 
+  // Find header row by locating a row containing 'MATNR'
+  let techRowIdx = -1, bizRowIdx = -1;
+  for (let i = 0; i < Math.min(rows.length, 5); i++) {
+    const set = rows[i].map(c => String(c||'').trim().toUpperCase());
+    if (set.includes('MATNR')) { techRowIdx = i; break; }
+  }
+  if (techRowIdx === -1) {
+    // Maybe headers are on row 0 already with business names — fall back
+    techRowIdx = 0;
+  }
+  // Business label row may be the next row
+  if (techRowIdx + 1 < rows.length) {
+    const b = rows[techRowIdx + 1].map(c => String(c||'').trim().toLowerCase());
+    if (b.some(x => x === 'material' || x.includes('material type'))) bizRowIdx = techRowIdx + 1;
+  }
+
+  const techHeaders = rows[techRowIdx].map(c => String(c||'').trim());
+  const bizHeaders = bizRowIdx > -1 ? rows[bizRowIdx].map(c => String(c||'').trim()) : [];
+
+  // Build column keys: prefer SAP technical names; for empty/invalid technical cells use business label-derived key.
+  // A "real" SAP tech name: short (<=30 chars), no whitespace or punctuation other than underscore.
+  const isValidSapName = (s) => !!s && s.length <= 30 && !/[\s.()'"!?,;:/\\]/.test(s);
+  const cols = [];
+  const labels = {};
+  for (let i = 0; i < techHeaders.length; i++) {
+    let key = techHeaders[i];
+    let label = bizHeaders[i] || key;
+    if (!isValidSapName(key)) {
+      // Derive a clean key from business label
+      const biz = bizHeaders[i] || '';
+      if (/comments\s*from\s*it/i.test(biz)) key = '_comments_it';
+      else if (/remarks/i.test(biz)) key = '_remarks_business';
+      else if (/material\s*description/i.test(biz)) key = 'MAKTX';
+      else if (biz) key = '_' + biz.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,30);
+      else key = '_col' + i;
+      label = biz || ('(col ' + i + ')');
+    }
+    // Avoid duplicate keys
+    let suffix = 1;
+    let final = key;
+    while (cols.includes(final)) { final = key + '_' + suffix; suffix++; }
+    cols.push(final);
+    labels[final] = FIELD_LABELS[final] || label || final;
+  }
+
+  const dataStartIdx = bizRowIdx > -1 ? bizRowIdx + 1 : techRowIdx + 1;
   const out = [];
-  let lastMod = '', lastDt = '';
-  for (let i = headerIdx + 1; i < rows.length; i++) {
+  for (let i = dataStartIdx; i < rows.length; i++) {
     const r = rows[i];
-    if (!r || r.every(c => !String(c||'').trim())) continue;
-    const mod = String(r[cMod]||'').trim() || lastMod;
-    const dt  = String(r[cDt] ||'').trim() || lastDt;
-    if (String(r[cMod]||'').trim()) lastMod = String(r[cMod]).trim();
-    if (String(r[cDt] ||'').trim()) lastDt  = String(r[cDt]).trim();
-    const tbl = String(r[cTbl]||'').trim();
-    if (!tbl) continue;
-    out.push({
-      module: mod,
-      dataType: dt,
-      table: tbl,
-      description: String(r[cDesc]||'').trim(),
-      startDate: fmtDate(cStart >= 0 ? r[cStart] : ''),
-      endDate: fmtDate(cEnd >= 0 ? r[cEnd] : ''),
-      actualEndDate: fmtDate(cActual >= 0 ? r[cActual] : ''),
-      actionBy: cBy >= 0 ? String(r[cBy]||'').trim() : '',
-      status: (cStatus >= 0 ? String(r[cStatus]||'').trim() : '') || 'Not Started',
-      comments: cComm >= 0 ? String(r[cComm]||'').trim() : '',
-      dataOwner: cOwner >= 0 ? String(r[cOwner]||'').trim() : ''
-    });
+    if (!r || r.every(c => c === null || c === undefined || String(c).trim() === '')) continue;
+    const obj = {};
+    for (let j = 0; j < cols.length; j++) {
+      let v = r[j];
+      // Format dates as YYYY-MM-DD strings for display
+      if (v instanceof Date) v = v.toISOString().slice(0,10);
+      else if (typeof v === 'number' && /date|laeda|ersda|sled/i.test(cols[j])) {
+        // Excel serial date heuristic
+        if (v > 20000 && v < 60000) {
+          const d = new Date((v - 25569) * 86400 * 1000);
+          if (!isNaN(d)) v = d.toISOString().slice(0,10);
+        }
+      }
+      obj[cols[j]] = v === null || v === undefined ? '' : v;
+    }
+    out.push(obj);
+  }
+  return { rows: out, columns: cols, labels: labels };
+}
+
+/* -------- Apply data + initial render -------- */
+function applyData(rows, columns, labels, timestamp) {
+  DATA = rows;
+  COLUMNS = columns;
+  LABELS = labels;
+  // Visible columns: those default cols that exist + 'Material description' if present at end
+  visibleCols = DEFAULT_COLS.filter(c => columns.includes(c));
+  // If 'Material description' duplicated at end of file, include it (key like 'Material description' or 'MAKTX_1')
+  const extraDesc = columns.find(c => /description/i.test(labels[c] || c) && !visibleCols.includes(c));
+  if (extraDesc && !visibleCols.includes('MAKTX')) visibleCols.push(extraDesc);
+  if (!visibleCols.length) visibleCols = columns.slice(0, 12);
+
+  document.getElementById('lastUpdated').textContent =
+    'Loaded · ' + (timestamp || formatGST(new Date())) + ' · ' + DATA.length.toLocaleString() + ' materials';
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  populateFilterOptions();
+  render();
+}
+
+/* -------- Filters and main render -------- */
+function getFiltered() {
+  const q = (document.getElementById('fltSearch').value || '').toLowerCase().trim();
+  const mtSet = FILTER_STATE.msMtart.selected;
+  const cmSet = FILTER_STATE.msComments.selected;
+  const mkSet = FILTER_STATE.msMatkl.selected;
+  const out = [];
+  for (let i = 0; i < DATA.length; i++) {
+    const d = DATA[i];
+    if (mtSet.size && !mtSet.has(d.MTART)) continue;
+    if (cmSet.size && !cmSet.has(d._comments_it)) continue;
+    if (mkSet.size && !mkSet.has(d.MATKL)) continue;
+    if (q) {
+      const hay = (String(d.MATNR||'') + ' ' + String(d.MAKTX||'') + ' ' + String(d.BISMT||'') + ' ' + String(d['Material description']||'')).toLowerCase();
+      if (!hay.includes(q)) continue;
+    }
+    out.push(d);
   }
   return out;
 }
-function parseProgress(v) {
-  if (v === null || v === undefined || v === '') return 0;
-  if (typeof v === 'number') return v <= 1 ? Math.round(v*100) : Math.round(v);
-  const s = String(v).replace('%','').trim();
-  const n = parseFloat(s);
-  if (isNaN(n)) return 0;
-  return n <= 1 && s.includes('.') ? Math.round(n*100) : Math.round(n);
-}
-function fmtDate(v) {
-  if (!v) return '';
-  if (v instanceof Date) return v.toISOString().slice(0,10);
-  const s = String(v).trim();
-  if (!s) return '';
-  // DD/MM/YYYY  → YYYY-MM-DD
-  let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (m) return m[3] + '-' + m[2].padStart(2,'0') + '-' + m[1].padStart(2,'0');
-  // Excel serial number
-  if (/^\d+(\.\d+)?$/.test(s)) {
-    const num = parseFloat(s);
-    if (num > 1000 && num < 60000) {
-      const d = new Date((num - 25569) * 86400 * 1000);
-      return d.toISOString().slice(0,10);
-    }
-  }
-  const d = new Date(s);
-  if (!isNaN(d.getTime())) return d.toISOString().slice(0,10);
-  return s;
+
+function populateFilterOptions() {
+  buildMultiSelect('msMtart');
+  buildMultiSelect('msComments');
+  buildMultiSelect('msMatkl');
 }
 
-/* -------- Rendering -------- */
-function getFiltered() {
-  const mod = document.getElementById('fltModule').value;
-  const st  = document.getElementById('fltStatus').value;
-  const ow  = document.getElementById('fltOwner').value;
-  const dept = document.getElementById('fltDept').value;
-  const q   = document.getElementById('fltSearch').value.toLowerCase().trim();
-  return DATA.filter(d =>
-    (!mod || d.module === mod) &&
-    (!st  || d.status === st) &&
-    (!ow  || d.actionBy === ow) &&
-    (!dept || (d.dataOwner || '') === dept) &&
-    (!q   || (d.table + ' ' + d.description + ' ' + d.dataType + ' ' + (d.dataOwner||'')).toLowerCase().includes(q))
-  );
+function buildMultiSelect(id) {
+  const cfg = FILTER_STATE[id];
+  const wrap = document.getElementById(id);
+  if (!wrap) return;
+  const counts = {};
+  for (let i = 0; i < DATA.length; i++) {
+    const v = DATA[i][cfg.key];
+    if (v === undefined || v === null || String(v).trim() === '') continue;
+    counts[v] = (counts[v]||0) + 1;
+  }
+  const sorted = Object.keys(counts).sort();
+  // Drop selected values that no longer exist after data refresh
+  for (const v of Array.from(cfg.selected)) { if (counts[v] === undefined) cfg.selected.delete(v); }
+  const trigger = wrap.querySelector('.ms-trigger');
+  const panel = wrap.querySelector('.ms-panel');
+  panel.innerHTML = '<input type="text" class="ms-search" placeholder="Search...">'
+    + '<div class="ms-actions"><button type="button" class="ms-all">Select all</button><button type="button" class="ms-none">Clear</button></div>'
+    + '<div class="ms-list">'
+    + sorted.map(v => '<label><input type="checkbox" value="' + esc(v) + '" ' + (cfg.selected.has(v)?'checked':'') + '><span>' + esc(v) + '</span><span class="count">' + counts[v].toLocaleString() + '</span></label>').join('')
+    + '</div>';
+  // Trigger click toggles panel (bind once)
+  if (!trigger._bound) {
+    trigger._bound = true;
+    trigger.addEventListener('click', e => {
+      e.stopPropagation();
+      document.querySelectorAll('.ms-panel').forEach(p => { if (p !== panel) p.classList.add('hidden'); });
+      panel.classList.toggle('hidden');
+      if (!panel.classList.contains('hidden')) {
+        const s = panel.querySelector('.ms-search'); if (s) s.focus();
+      }
+    });
+  }
+  // Search
+  const search = panel.querySelector('.ms-search');
+  search.addEventListener('input', () => {
+    const q = search.value.toLowerCase().trim();
+    panel.querySelectorAll('.ms-list label').forEach(lbl => {
+      lbl.classList.toggle('ms-h', q && !lbl.textContent.toLowerCase().includes(q));
+    });
+  });
+  // Select all / Clear
+  panel.querySelector('.ms-all').addEventListener('click', () => {
+    panel.querySelectorAll('.ms-list label:not(.ms-h) input').forEach(cb => { cb.checked = true; cfg.selected.add(cb.value); });
+    updateMsTrigger(id); currentPage = 1; render();
+  });
+  panel.querySelector('.ms-none').addEventListener('click', () => {
+    panel.querySelectorAll('.ms-list input').forEach(cb => cb.checked = false);
+    cfg.selected.clear();
+    updateMsTrigger(id); currentPage = 1; render();
+  });
+  // Checkboxes
+  panel.querySelectorAll('.ms-list input').forEach(cb => {
+    cb.addEventListener('change', () => {
+      if (cb.checked) cfg.selected.add(cb.value); else cfg.selected.delete(cb.value);
+      updateMsTrigger(id); currentPage = 1; render();
+    });
+  });
+  updateMsTrigger(id);
+}
+
+function updateMsTrigger(id) {
+  const cfg = FILTER_STATE[id];
+  const wrap = document.getElementById(id);
+  if (!wrap) return;
+  const text = wrap.querySelector('.ms-text');
+  const sel = cfg.selected.size;
+  if (sel === 0) text.textContent = 'All ' + cfg.label;
+  else if (sel === 1) text.textContent = Array.from(cfg.selected)[0];
+  else text.textContent = sel + ' ' + cfg.label + ' selected';
 }
 
 function render() {
-  populateFilterOptions();
-  const rows = getFiltered();
-  renderKPIs(rows);
-  renderCharts(rows);
-  renderTable(rows);
-}
-
-function populateFilterOptions() {
-  const fill = (id, values, current) => {
-    const sel = document.getElementById(id);
-    const cur = current ?? sel.value;
-    const labels = {fltModule:'modules',fltStatus:'statuses',fltOwner:'',fltDept:'departments'};
-    sel.innerHTML = '<option value="">All ' + labels[id] + '</option>'
-      + values.filter(v => v).map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
-    sel.value = cur;
-  };
-  fill('fltModule', uniq(DATA.map(d => d.module)).sort());
-  fill('fltStatus', uniq(DATA.map(d => d.status)).sort());
-  fill('fltOwner',  uniq(DATA.map(d => d.actionBy)).sort());
-  fill('fltDept',   uniq(DATA.map(d => d.dataOwner || '')).sort());
+  const filtered = getFiltered();
+  renderKPIs(filtered);
+  renderCharts(filtered);
+  renderScorecard(filtered);
+  renderLegacy(filtered);
+  renderDuplicates(filtered);
+  renderTable(filtered);
 }
 
 function renderKPIs(rows) {
   const total = rows.length;
-  const byStatus = countBy(rows, 'status');
-  const completed = byStatus['Completed'] || 0;
-  const inProgress = byStatus['In Progress'] || 0;
-  const notStarted = byStatus['Not Started'] || 0;
-  const blocked = (byStatus['Blocked'] || 0) + (byStatus['On Hold'] || 0);
-  const today = new Date(); today.setHours(0,0,0,0);
-  const overdue = rows.filter(r => {
-    if ((r.status||'').toLowerCase() === 'completed') return false;
-    if (!r.endDate) return false;
-    const e = new Date(r.endDate);
-    return !isNaN(e) && e < today;
-  }).length;
+  let matnrBlank = 0, bismtBlank = 0, lvormX = 0, mstaeSet = 0;
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    if (!String(r.MATNR||'').trim()) matnrBlank++;
+    if (!String(r.BISMT||'').trim()) bismtBlank++;
+    if (String(r.LVORM||'').trim().toUpperCase() === 'X') lvormX++;
+    if (String(r.MSTAE||'').trim()) mstaeSet++;
+  }
+  const matnrFilled = total - matnrBlank;
+  const bismtFilled = total - bismtBlank;
+  // Completeness across MARA standard fields
+  const checkCols = ['MATNR','MAKTX','MTART','MATKL','MEINS','MBRSH','BRGEW','NTGEW','GEWEI'].filter(c => COLUMNS.includes(c));
+  let cellsTotal = 0, cellsFilled = 0;
+  for (let i = 0; i < rows.length; i++) {
+    for (const c of checkCols) {
+      cellsTotal++;
+      const v = rows[i][c];
+      if (v !== null && v !== undefined && String(v).trim() !== '' && String(v).trim() !== '0') cellsFilled++;
+    }
+  }
+  const completeness = cellsTotal ? Math.round(cellsFilled/cellsTotal*100) : 0;
 
-  const container = document.getElementById('kpis');
-  container.innerHTML = `
-    <div class="kpi"><div class="label">Total Tables</div><div class="value">${total}</div><div class="meta">${uniq(rows.map(r=>r.module)).length} modules in scope</div></div>
-    <div class="kpi green"><div class="label">Completed</div><div class="value">${completed}</div><div class="meta">${pct(completed,total)} of total</div></div>
-    <div class="kpi amber"><div class="label">In Progress</div><div class="value">${inProgress}</div><div class="meta">${pct(inProgress,total)} of total</div></div>
-    <div class="kpi grey"><div class="label">Not Started</div><div class="value">${notStarted}</div><div class="meta">${pct(notStarted,total)} of total</div></div>
-    <div class="kpi red"><div class="label">Blocked / On Hold</div><div class="value">${blocked}</div><div class="meta">attention required</div></div>
-    <div class="kpi purple"><div class="label">Overdue</div><div class="value">${overdue.toLocaleString()}</div><div class="meta">past Exp. End &amp; not Completed</div></div>
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi"><div class="label">Total Materials</div><div class="value">${total.toLocaleString()}</div><div class="meta">in current scope</div></div>
+    <div class="kpi green"><div class="label">Materials (Calculated)</div><div class="value">${matnrFilled.toLocaleString()}</div><div class="meta">Blank: <strong>${matnrBlank.toLocaleString()}</strong> (${pct(matnrBlank,total)})</div></div>
+    <div class="kpi amber"><div class="label">Old Material Number (Calculated)</div><div class="value">${bismtFilled.toLocaleString()}</div><div class="meta">Blank: <strong>${bismtBlank.toLocaleString()}</strong> (${pct(bismtBlank,total)})</div></div>
+    <div class="kpi purple"><div class="label">Data Completeness</div><div class="value">${completeness}%</div><div class="meta">avg of ${checkCols.length} core fields</div></div>
+    <div class="kpi red"><div class="label">Deletion Flag (LVORM=X)</div><div class="value">${lvormX.toLocaleString()}</div><div class="meta">${pct(lvormX,total)} of scope</div></div>
+    <div class="kpi grey"><div class="label">MSTAE Status Set</div><div class="value">${mstaeSet.toLocaleString()}</div><div class="meta">${pct(mstaeSet,total)} have x-plant status</div></div>
   `;
 }
 
 function renderCharts(rows) {
-  // Status overview (donut)
-  const sCounts = countBy(rows, 'status');
-  const sLabels = Object.keys(sCounts);
-  const sData = sLabels.map(l => sCounts[l]);
-  const sColors = sLabels.map(l => STATUS_COLORS[l] || '#8a98ad');
-  upsertChart('chartStatus', {
-    type: 'doughnut',
-    data: { labels: sLabels, datasets: [{ data: sData, backgroundColor: sColors, borderColor: '#fff', borderWidth: 2 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } }, cutout: '62%' }
+  // MTART donut
+  const mtartCounts = countBy(rows, 'MTART');
+  drawChart('chartMtart', 'doughnut', Object.keys(mtartCounts), Object.values(mtartCounts), {
+    legend: 'right', cutout: '60%'
   });
+  // MATKL top 15 horizontal bar
+  const matklCounts = countBy(rows, 'MATKL');
+  const matklTop = Object.entries(matklCounts).sort((a,b)=>b[1]-a[1]).slice(0, 15);
+  drawBar('chartMatkl', matklTop.map(e=>e[0]), matklTop.map(e=>e[1]), 'horizontal');
+  // MEINS top 10
+  const meinsCounts = countBy(rows, 'MEINS');
+  const meinsTop = Object.entries(meinsCounts).sort((a,b)=>b[1]-a[1]).slice(0, 10);
+  drawBar('chartMeins', meinsTop.map(e=>e[0]), meinsTop.map(e=>e[1]), 'vertical');
+}
 
-  // Tables by module (donut)
-  const mCounts = countBy(rows, 'module');
-  const mLabels = Object.keys(mCounts);
-  const mData = mLabels.map(l => mCounts[l]);
-  const mColors = mLabels.map(l => MODULE_COLORS[l] || '#5b6b85');
-  upsertChart('chartModule', {
-    type: 'doughnut',
-    data: { labels: mLabels, datasets: [{ data: mData, backgroundColor: mColors, borderColor: '#fff', borderWidth: 2 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } }, cutout: '62%' }
-  });
+const PALETTE = ['#1565d8','#0d7377','#e08f1c','#6e57d3','#c87320','#0aa6a6','#0d7377','#5b6b85','#3a86ff','#fb8500','#fcb53b','#7209b7','#d18525','#264653','#8a98ad','#0a3d91'];
 
-  // Overdue tables by module (bar)
-  const today2 = new Date(); today2.setHours(0,0,0,0);
-  const groups = {};
-  rows.forEach(r => {
-    if (!groups[r.module]) groups[r.module] = { overdue: 0, total: 0, completed: 0 };
-    groups[r.module].total += 1;
-    if ((r.status||'').toLowerCase() === 'completed') groups[r.module].completed += 1;
-    if (r.endDate && (r.status||'').toLowerCase() !== 'completed') {
-      const e = new Date(r.endDate);
-      if (!isNaN(e) && e < today2) groups[r.module].overdue += 1;
+function drawChart(id, type, labels, data, opts) {
+  if (chartInstances[id]) chartInstances[id].destroy();
+  const colors = labels.map((_,i) => PALETTE[i % PALETTE.length]);
+  chartInstances[id] = new Chart(document.getElementById(id), {
+    type,
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderColor:'#fff', borderWidth:1.5 }]},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ position: opts.legend || 'bottom', labels:{ boxWidth: 10, padding: 8, font:{size: 11} } },
+        tooltip:{ callbacks:{ label: c => c.label + ': ' + c.raw.toLocaleString() } }
+      },
+      cutout: opts.cutout
     }
   });
-  const pLabels = Object.keys(groups).sort();
-  const pData = pLabels.map(l => groups[l].overdue);
-  const pColors = pLabels.map(l => MODULE_COLORS[l] || '#1565d8');
-  upsertChart('chartProgress', {
+}
+
+function drawBar(id, labels, data, orient) {
+  if (chartInstances[id]) chartInstances[id].destroy();
+  const colors = labels.map((_,i) => PALETTE[i % PALETTE.length]);
+  chartInstances[id] = new Chart(document.getElementById(id), {
     type: 'bar',
-    data: { labels: pLabels, datasets: [{ label: 'Overdue', data: pData, backgroundColor: pColors, borderRadius: 4 }] },
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 3 }]},
     options: {
+      indexAxis: orient === 'horizontal' ? 'y' : 'x',
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.raw + ' overdue of ' + groups[c.label].total + ' (' + groups[c.label].completed + ' completed)' } } },
-      scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: c => c.raw.toLocaleString() } } },
+      scales:{
+        x:{ ticks:{ font:{size:11}, callback: function(val){ const t = this.getLabelForValue ? this.getLabelForValue(val) : val; return String(t).length > 16 ? String(t).slice(0,15)+'…' : t; } } },
+        y:{ ticks:{ font:{size:11}, callback: function(val){ const t = this.getLabelForValue ? this.getLabelForValue(val) : val; return String(t).length > 18 ? String(t).slice(0,17)+'…' : t; } } }
+      }
     }
   });
+}
 
-  // Department workload bar
-  const dCounts = {};
-  rows.forEach(r => {
-    const d = (r.dataOwner || '(Unassigned)');
-    dCounts[d] = (dCounts[d] || 0) + 1;
-  });
-  const dLabels = Object.keys(dCounts).sort();
-  const dData = dLabels.map(l => dCounts[l]);
-  const palette = ['#1565d8','#2e9d5a','#e08f1c','#6e57d3','#c87320','#0aa6a6','#0d7377','#5b6b85'];
-  const dColors = dLabels.map((_,i) => palette[i % palette.length]);
-  upsertChart('chartDept', {
-    type: 'bar',
-    data: { labels: dLabels, datasets: [{ label: '# tables', data: dData, backgroundColor: dColors, borderRadius: 4 }] },
-    options: {
-      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => c.raw + ' table' + (c.raw === 1 ? '' : 's') } } },
-      scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }
+function renderScorecard(rows) {
+  if (!rows.length) { document.getElementById('scorecard').innerHTML = '<div style="color:var(--muted);padding:20px;text-align:center;">No data in current filter</div>'; return; }
+  const cols = COLUMNS.filter(c => !c.startsWith('_col'));
+  const stats = cols.map(c => {
+    let filled = 0;
+    for (let i = 0; i < rows.length; i++) {
+      const v = rows[i][c];
+      if (v !== null && v !== undefined && String(v).trim() !== '' && String(v).trim() !== '0') filled++;
     }
-  });
-
+    const p = Math.round(filled/rows.length*100);
+    return { col: c, label: LABELS[c] || c, pct: p, filled };
+  }).sort((a,b) => b.pct - a.pct);
+  document.getElementById('scorecard').innerHTML = stats.map(s => {
+    const cls = s.pct >= 80 ? 'high' : (s.pct >= 40 ? 'mid' : 'low');
+    return `<div class="scorecard-row"><div class="name" title="${esc(s.col)}">${esc(s.label)}</div><div class="bar"><div class="fill ${cls}" style="width:${s.pct}%"></div></div><div class="pctv">${s.pct}% · ${s.filled.toLocaleString()}</div></div>`;
+  }).join('');
 }
 
-/* Date-fns adapter is loaded in <head> alongside Chart.js */
-
-function upsertChart(id, config) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  if (charts[id]) charts[id].destroy();
-  charts[id] = new Chart(el, config);
+function renderLegacy(rows) {
+  let lvormX = 0, mstae = 0, bismt = 0, both = 0;
+  const mstaeBreakdown = {};
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    const isLvorm = String(r.LVORM||'').trim().toUpperCase() === 'X';
+    const hasMstae = String(r.MSTAE||'').trim() !== '';
+    const hasBismt = String(r.BISMT||'').trim() !== '';
+    if (isLvorm) lvormX++;
+    if (hasMstae) { mstae++; const k = String(r.MSTAE).trim(); mstaeBreakdown[k] = (mstaeBreakdown[k]||0) + 1; }
+    if (hasBismt) bismt++;
+    if (isLvorm && hasMstae) both++;
+  }
+  const total = rows.length;
+  const breakdownHtml = Object.entries(mstaeBreakdown).sort((a,b)=>b[1]-a[1]).slice(0, 8).map(([k,v]) =>
+    `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:13px;"><span>MSTAE = <code>${esc(k)}</code></span><strong>${v.toLocaleString()}</strong></div>`
+  ).join('');
+  document.getElementById('legacyPanel').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+      <div style="padding:10px 14px;background:var(--accent);border-radius:6px;">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Deletion Flag (LVORM=X)</div>
+        <div style="font-size:22px;font-weight:700;margin-top:2px;">${lvormX.toLocaleString()}</div>
+        <div style="font-size:12px;color:var(--muted);">${pct(lvormX,total)} of scope</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--accent);border-radius:6px;">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">X-plant Status (MSTAE)</div>
+        <div style="font-size:22px;font-weight:700;margin-top:2px;">${mstae.toLocaleString()}</div>
+        <div style="font-size:12px;color:var(--muted);">${pct(mstae,total)} of scope</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--accent);border-radius:6px;">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Has BISMT (legacy ref)</div>
+        <div style="font-size:22px;font-weight:700;margin-top:2px;">${bismt.toLocaleString()}</div>
+        <div style="font-size:12px;color:var(--muted);">${pct(bismt,total)} of scope</div>
+      </div>
+      <div style="padding:10px 14px;background:var(--accent);border-radius:6px;">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">LVORM=X &amp; MSTAE set</div>
+        <div style="font-size:22px;font-weight:700;margin-top:2px;">${both.toLocaleString()}</div>
+        <div style="font-size:12px;color:var(--muted);">cross-check candidates</div>
+      </div>
+    </div>
+    <div style="font-size:11px;text-transform:uppercase;color:var(--muted);font-weight:600;letter-spacing:.4px;margin-bottom:6px;">MSTAE breakdown (top 8)</div>
+    ${breakdownHtml || '<div style="color:var(--muted);font-size:13px;">No MSTAE codes set in scope.</div>'}
+  `;
 }
 
-function renderTable(rowsArg) {
-  const rows = rowsArg || getFiltered();
-  const tbody = document.querySelector('#detailTable tbody');
-  document.getElementById('rowCount').textContent = '· ' + rows.length + ' rows';
+function renderDuplicates(rows) {
+  const map = {};
+  for (let i = 0; i < rows.length; i++) {
+    const v = String(rows[i].BISMT || '').trim();
+    if (!v) continue;
+    if (!map[v]) map[v] = [];
+    map[v].push(rows[i]);
+  }
+  const dups = Object.entries(map).filter(([k,v]) => v.length > 1).sort((a,b) => b[1].length - a[1].length);
+  const top = dups.slice(0, 50);
+  const totalDupGroups = dups.length;
+  const totalDupRecords = dups.reduce((s,[k,v]) => s + v.length, 0);
+  if (!totalDupGroups) {
+    document.getElementById('duplicatePanel').innerHTML = '<div style="color:var(--muted);padding:20px;text-align:center;">No duplicate BISMT values in current scope.</div>';
+    return;
+  }
+  const rowsHtml = top.map(([bismt, list]) => {
+    const matnrs = list.map(r => esc(r.MATNR)).join(', ');
+    const descs = list.map(r => esc(r.MAKTX || r['Material description'] || '')).join(' / ');
+    return `<tr><td><code>${esc(bismt)}</code></td><td class="num">${list.length}</td><td>${matnrs}</td><td style="max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${descs}">${descs}</td></tr>`;
+  }).join('');
+  document.getElementById('duplicatePanel').innerHTML = `
+    <div style="margin-bottom:10px;font-size:13px;color:var(--muted);">
+      <strong>${totalDupGroups.toLocaleString()}</strong> distinct BISMT values are reused across <strong>${totalDupRecords.toLocaleString()}</strong> material records. Showing top ${top.length} by repeat count.
+    </div>
+    <div style="overflow-x:auto;max-height:320px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;">
+      <table class="detail">
+        <thead><tr><th>BISMT</th><th class="num"># Records</th><th>MATNRs</th><th>Descriptions</th></tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </div>
+  `;
+}
 
+/* -------- Detail Table with pagination -------- */
+function renderTable(rows) {
   // sort
   const k = sortState.key, dir = sortState.dir;
   const sorted = rows.slice().sort((a,b) => {
-    let av = a[k] ?? '', bv = b[k] ?? '';
-    if (k === 'progress') { av = Number(av)||0; bv = Number(bv)||0; }
-    if (av < bv) return -1*dir;
-    if (av > bv) return  1*dir;
-    return 0;
+    let av = a[k], bv = b[k];
+    if (av === undefined || av === null) av = '';
+    if (bv === undefined || bv === null) bv = '';
+    const an = parseFloat(av), bn = parseFloat(bv);
+    if (!isNaN(an) && !isNaN(bn) && String(av).trim() !== '' && String(bv).trim() !== '') return (an - bn) * dir;
+    av = String(av); bv = String(bv);
+    if (av < bv) return -1*dir; if (av > bv) return 1*dir; return 0;
   });
 
-  document.querySelectorAll('#detailTable thead th').forEach(th => {
-    const key = th.dataset.key;
-    const arrow = (key === sortState.key) ? (sortState.dir === 1 ? ' ▲' : ' ▼') : '';
-    th.innerHTML = th.textContent.replace(/[ ▲▼]+$/,'') + (arrow ? `<span class="arrow">${arrow}</span>` : '');
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const slice = sorted.slice(start, start + PAGE_SIZE);
+
+  document.getElementById('rowCount').textContent = '· ' + sorted.length.toLocaleString() + ' rows · page ' + currentPage + ' of ' + totalPages.toLocaleString();
+
+  const head = document.getElementById('detailHead');
+  head.innerHTML = visibleCols.map(c => {
+    const arrow = c === sortState.key ? (sortState.dir === 1 ? '▲' : '▼') : '';
+    return `<th data-key="${esc(c)}" title="${esc(c)}">${esc(LABELS[c] || c)} ${arrow ? `<span class="arrow">${arrow}</span>` : ''}</th>`;
+  }).join('');
+  head.querySelectorAll('th').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.key;
+      sortState.dir = (sortState.key === key) ? -sortState.dir : 1;
+      sortState.key = key;
+      renderTable(rows);
+    });
   });
 
-  if (!sorted.length) {
-    tbody.innerHTML = '<tr><td colspan="11" class="empty-state">No tables match the current filters.</td></tr>';
-    return;
+  const body = document.getElementById('detailBody');
+  if (!slice.length) {
+    body.innerHTML = `<tr><td colspan="${visibleCols.length}" style="padding:30px;text-align:center;color:var(--muted);">No materials match the current filters</td></tr>`;
+  } else {
+    body.innerHTML = slice.map(r => '<tr>' + visibleCols.map(c => {
+      const v = r[c];
+      const isNum = typeof v === 'number';
+      return `<td class="${isNum?'num':''}" title="${esc(String(v||''))}">${esc(String(v||''))}</td>`;
+    }).join('') + '</tr>').join('');
   }
 
-  tbody.innerHTML = sorted.map(r => {
-    const modColor = MODULE_COLORS[r.module] || '#5b6b85';
-    const stClass = 'status-' + (r.status || 'Not Started').toLowerCase().replace(/\s+/g,'-');
-    return `<tr>
-      <td><span class="module-tag" style="background:${modColor}">${esc(r.module)}</span></td>
-      <td>${esc(r.dataType)}</td>
-      <td><strong>${esc(r.table)}</strong></td>
-      <td style="max-width: 280px;">${esc(r.description)}</td>
-      <td>${esc(r.actionBy) || '<span style="color:#aab3c2">—</span>'}</td>
-      <td style="white-space:nowrap;">${esc(r.startDate) || '<span style="color:#aab3c2">—</span>'}</td>
-      <td style="white-space:nowrap;">${esc(r.endDate) || '<span style="color:#aab3c2">—</span>'}</td>
-      <td style="white-space:nowrap;">${esc(r.actualEndDate || '') || '<span style=\"color:#aab3c2\">—</span>'}</td>
-      <td><span class="pill ${stClass}">${esc(r.status)}</span></td>
-      <td style="font-size:12px;">${esc(r.dataOwner || '') || '<span style=\"color:#aab3c2\">—</span>'}</td>
-      <td style="max-width: 220px; color: var(--muted); font-size: 12px;">${esc(r.comments)}</td>
-    </tr>`;
-  }).join('');
+  // Pagination controls
+  const pag = document.getElementById('pagination');
+  pag.innerHTML = `
+    <button id="pgFirst" ${currentPage<=1?'disabled':''}>« First</button>
+    <button id="pgPrev" ${currentPage<=1?'disabled':''}>‹ Prev</button>
+    <span class="page-info">Page <strong>${currentPage}</strong> of ${totalPages.toLocaleString()}</span>
+    <button id="pgNext" ${currentPage>=totalPages?'disabled':''}>Next ›</button>
+    <button id="pgLast" ${currentPage>=totalPages?'disabled':''}>Last »</button>
+    <span class="spacer" style="flex:1"></span>
+    <span class="page-info">${PAGE_SIZE} rows / page</span>
+  `;
+  document.getElementById('pgFirst').onclick = () => { currentPage = 1; renderTable(rows); };
+  document.getElementById('pgPrev').onclick  = () => { currentPage--; renderTable(rows); };
+  document.getElementById('pgNext').onclick  = () => { currentPage++; renderTable(rows); };
+  document.getElementById('pgLast').onclick  = () => { currentPage = totalPages; renderTable(rows); };
+}
+
+/* -------- Column picker -------- */
+function toggleColPicker(e) {
+  const pop = document.getElementById('colPickerPopover');
+  if (pop.classList.contains('hidden')) {
+    pop.innerHTML = '<div style="font-weight:600;font-size:12px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Visible columns</div>'
+      + COLUMNS.map(c => `<label><input type="checkbox" data-key="${esc(c)}" ${visibleCols.includes(c)?'checked':''}> <span>${esc(LABELS[c]||c)}</span></label>`).join('')
+      + '<div style="margin-top:10px;display:flex;gap:6px;"><button class="btn secondary" id="colAll" style="flex:1;font-size:12px;padding:5px;">All</button><button class="btn secondary" id="colNone" style="flex:1;font-size:12px;padding:5px;">None</button><button class="btn secondary" id="colReset" style="flex:1;font-size:12px;padding:5px;">Reset</button></div>';
+    pop.classList.remove('hidden');
+    pop.style.right = '20px';
+    pop.style.top = (e.target.getBoundingClientRect().bottom + window.scrollY + 6) + 'px';
+    pop.style.position = 'fixed';
+    pop.style.right = '40px';
+    pop.style.top = (e.target.getBoundingClientRect().bottom + 6) + 'px';
+    pop.querySelectorAll('input[type=checkbox]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const key = cb.dataset.key;
+        if (cb.checked) { if (!visibleCols.includes(key)) visibleCols.push(key); }
+        else visibleCols = visibleCols.filter(c => c !== key);
+        render();
+      });
+    });
+    document.getElementById('colAll').onclick = () => { visibleCols = COLUMNS.slice(); pop.classList.add('hidden'); render(); };
+    document.getElementById('colNone').onclick = () => { visibleCols = ['MATNR']; pop.classList.add('hidden'); render(); };
+    document.getElementById('colReset').onclick = () => { visibleCols = DEFAULT_COLS.filter(c => COLUMNS.includes(c)); pop.classList.add('hidden'); render(); };
+  } else {
+    pop.classList.add('hidden');
+  }
+}
+
+/* -------- Export -------- */
+function exportFiltered(format) {
+  const rows = getFiltered();
+  if (!rows.length) { showToast('Nothing to export'); return; }
+  showLoading('Building ' + format.toUpperCase() + ' for ' + rows.length.toLocaleString() + ' rows…');
+  setTimeout(() => {
+    try {
+      if (format === 'csv') {
+        const headers = visibleCols.map(c => LABELS[c] || c);
+        const lines = [headers.map(csvEscape).join(',')];
+        for (let i = 0; i < rows.length; i++) {
+          lines.push(visibleCols.map(c => csvEscape(rows[i][c])).join(','));
+        }
+        downloadBlob(new Blob([lines.join('\n')], { type:'text/csv;charset=utf-8;' }),
+          'material_master_' + new Date().toISOString().slice(0,10) + '.csv');
+      } else {
+        // XLSX
+        const aoa = [visibleCols.map(c => LABELS[c] || c)];
+        for (let i = 0; i < rows.length; i++) aoa.push(visibleCols.map(c => rows[i][c]));
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Material Master');
+        XLSX.writeFile(wb, 'material_master_' + new Date().toISOString().slice(0,10) + '.xlsx');
+      }
+      hideLoading();
+      showToast('Exported ' + rows.length.toLocaleString() + ' rows');
+    } catch(err) { hideLoading(); showToast('Export failed: ' + err.message); console.error(err); }
+  }, 50);
+}
+function csvEscape(v) { return '"' + String(v ?? '').replace(/"/g, '""') + '"'; }
+function downloadBlob(blob, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/* -------- IndexedDB persistence -------- */
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(DB_STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function loadFromIndexedDB() {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_STORE, 'readonly');
+    const r = tx.objectStore(DB_STORE).get(DB_KEY);
+    r.onsuccess = () => resolve(r.result);
+    r.onerror = () => reject(r.error);
+  }));
+}
+function saveToIndexedDB(payload) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_STORE, 'readwrite');
+    const r = tx.objectStore(DB_STORE).put(payload, DB_KEY);
+    r.onsuccess = () => resolve();
+    r.onerror = () => reject(r.error);
+  }));
 }
 
 /* -------- Helpers -------- */
 function formatGST(d) {
-  // Always render in Gulf Standard Time (Asia/Dubai, UTC+4) regardless of user's browser timezone
   try {
     const parts = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Asia/Dubai',
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', hour12: false
-    }).formatToParts(d).reduce((a,p) => (a[p.type]=p.value, a), {});
-    return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute} GST`;
+      year:'numeric', month:'2-digit', day:'2-digit',
+      hour:'2-digit', minute:'2-digit', hour12: false
+    }).formatToParts(d).reduce((a,p)=>(a[p.type]=p.value,a),{});
+    return parts.year + '-' + parts.month + '-' + parts.day + ' ' + parts.hour + ':' + parts.minute + ' GST';
   } catch(e) {
-    // Fallback: manual UTC+4 offset
     const u = new Date(d.getTime() + 4*60*60*1000);
     const pad = n => String(n).padStart(2,'0');
-    return `${u.getUTCFullYear()}-${pad(u.getUTCMonth()+1)}-${pad(u.getUTCDate())} ${pad(u.getUTCHours())}:${pad(u.getUTCMinutes())} GST`;
+    return u.getUTCFullYear() + '-' + pad(u.getUTCMonth()+1) + '-' + pad(u.getUTCDate()) + ' ' + pad(u.getUTCHours()) + ':' + pad(u.getUTCMinutes()) + ' GST';
   }
 }
-function uniq(a) { return Array.from(new Set(a.filter(x => x !== undefined && x !== null && x !== ''))); }
-function countBy(rows, key) { return rows.reduce((acc, r) => { const v = r[key] || ''; acc[v] = (acc[v]||0) + 1; return acc; }, {}); }
-function pct(a, b) { return b ? Math.round(a/b*100) + '%' : '0%'; }
-function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function countBy(rows, key) { const c = {}; for (let i=0;i<rows.length;i++){ const v = rows[i][key]; if (v===null||v===undefined||String(v).trim()==='') continue; c[v]=(c[v]||0)+1; } return c; }
+function pct(a,b){ return b? Math.round(a/b*100)+'%':'0%'; }
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-function exportCSV() {
-  const rows = getFiltered();
-  const headers = ['Module','Data Type','Table','Description','Action By','Start Date','Exp. End Date','Actual End Date','Status','Data Owner (Dept.)','Comments'];
-  const csv = [headers.join(',')].concat(
-    rows.map(r => [r.module, r.dataType, r.table, r.description, r.actionBy, r.startDate, r.endDate, r.actualEndDate || '', r.status, r.dataOwner || '', r.comments]
-      .map(v => '"' + String(v ?? '').replace(/"/g,'""') + '"').join(','))
-  ).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'mdm_migration_status_' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
-  showToast('Exported ' + rows.length + ' rows');
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._h);
-  t._h = setTimeout(() => t.classList.remove('show'), 2200);
-}
+function showToast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 2400); }
+function showLoading(msg){ document.getElementById('loadingMsg').textContent = msg || 'Loading…'; document.getElementById('loading').classList.remove('hidden'); }
+function hideLoading(){ document.getElementById('loading').classList.add('hidden'); }
 
 window.addEventListener('DOMContentLoaded', boot);
 </script>
